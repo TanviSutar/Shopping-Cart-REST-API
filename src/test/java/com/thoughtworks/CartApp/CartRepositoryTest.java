@@ -13,37 +13,37 @@ import static org.hamcrest.Matchers.*;
 public class CartRepositoryTest {
 
     private CartRepository repository;
-    private Item itemOne;
-    private Item itemTwo;
+    private Item itemPencil;
+    private Item itemErasure;
 
     @BeforeEach
     void setUp(){
         repository = new CartRepository();
-        itemOne = new Item("Pencil", 20);
-        itemTwo = new Item("Erasure", 5);
+        itemPencil = new Item("Pencil", 20);
+        itemErasure = new Item("Erasure", 5);
     }
 
     @Test
     void shouldAddItemToCart() {
 
-        repository.add(itemOne);
+        repository.add(itemPencil);
 
-        assertThat(repository.contains(itemOne), is(equalTo(Boolean.TRUE)));
+        assertThat(repository.contains(itemPencil), is(equalTo(Boolean.TRUE)));
     }
 
     @Test
     void shouldDeleteItemInTheCart(){
-        repository.add(itemOne);
+        repository.add(itemPencil);
 
-        repository.remove(itemOne);
+        repository.remove(itemPencil);
 
-        assertThat(repository.contains(itemOne), is(equalTo(Boolean.FALSE)));
+        assertThat(repository.contains(itemPencil), is(equalTo(Boolean.FALSE)));
     }
 
     @Test
     void shouldReturnTwentyFiveAsTotalCostOfPencilWorthRupeesTwentyAndErasureWorthRupeesFive() {
-        repository.add(itemOne);
-        repository.add(itemTwo);
+        repository.add(itemPencil);
+        repository.add(itemErasure);
 
         assertThat(repository.totalCost(), is(closeTo(25, 0.001)));
     }

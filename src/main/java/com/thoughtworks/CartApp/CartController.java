@@ -8,12 +8,5 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 public class CartController {
-    private final Cart cart = new Cart();
-
-    @GetMapping("/cart")
-    @ResponseStatus(OK)
-    public Cart getCart(){
-        return cart;
-    }
 
 }

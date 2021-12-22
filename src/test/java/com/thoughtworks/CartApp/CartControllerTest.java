@@ -12,14 +12,4 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 public class CartControllerTest {
 
-    @Autowired
-    MockMvc mockMvc;
-
-    @Test
-    void shouldReturnEmptyCart() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        mockMvc.perform(get("/cart"))
-                .andExpect(content().json(mapper.writeValueAsString(new Cart())))
-                .andExpect(status().isOk());
-    }
 }

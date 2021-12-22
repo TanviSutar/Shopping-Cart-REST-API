@@ -1,7 +1,6 @@
 package com.thoughtworks.CartApp;
 
 import org.springframework.stereotype.Repository;
-
 import java.util.ArrayList;
 
 @Repository
@@ -14,28 +13,15 @@ public class CartRepository {
     }
 
     public void add(Item newItem) {
-        if(contains(newItem)){
-            return;
-        }
         cartItems.add(newItem);
     }
 
     public boolean contains(Item item){
-        for(Item items: cartItems){
-            if(items.equals(item)){
-                return true;
-            }
-        }
-        return false;
+        return cartItems.contains(item);
     }
 
     public void remove(Item givenItem) {
-        for(Item item : cartItems){
-            if(item.equals(givenItem)){
-                cartItems.remove(givenItem);
-                break;
-            }
-        }
+        cartItems.remove(givenItem);
     }
 
     public double totalCost() {
