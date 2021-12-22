@@ -22,6 +22,4 @@ public class CartControllerTest {
                 .andExpect(content().json(mapper.writeValueAsString(new Cart())))
                 .andExpect(status().isOk());
     }
-
-
 }

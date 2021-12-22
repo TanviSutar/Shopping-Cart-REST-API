@@ -24,12 +24,20 @@ public class Cart extends ArrayList<Item> {
         if (this == o) return true;
         if (!(o instanceof Cart)) return false;
         if (!super.equals(o)) return false;
-        Cart items = (Cart) o;
-        return totalCost == items.totalCost;
+        Cart cart = (Cart) o;
+        if(this.size() != cart.size()) return false;
+        for(int i=0; i<this.size(); i++){
+            if(!this.get(i).equals(cart.get(i))) return false;
+        }
+        return totalCost == cart.totalCost;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), totalCost);
+        int hash = 0;
+        for(Item items: this){
+            hash += Objects.hash(items);
+        }
+        return hash;
     }
 }
