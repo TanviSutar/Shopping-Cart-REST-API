@@ -1,0 +1,9 @@
+#Gradle
+.gradle/
+gradlew
+gradlew.bat
+build/
+
+.idea/
+out/
+HELP.md
