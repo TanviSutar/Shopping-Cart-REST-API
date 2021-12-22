@@ -1,21 +1,22 @@
 package com.thoughtworks.CartApp;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.lang.model.type.ArrayType;
 import java.util.ArrayList;
 
 @Repository
 public class CartRepository {
 
-    private ArrayList<Item> cartItems;
+    private final ArrayList<Item> cartItems;
 
     public CartRepository(){
         this.cartItems = new ArrayList<>();
     }
 
     public void add(Item newItem) {
+        if(contains(newItem)){
+            return;
+        }
         cartItems.add(newItem);
     }
 
@@ -27,7 +28,6 @@ public class CartRepository {
         }
         return false;
     }
-
 
     public void remove(Item givenItem) {
         for(Item item : cartItems){
@@ -44,5 +44,9 @@ public class CartRepository {
             total += item.getCost();
         }
         return total;
+    }
+
+    public ArrayList<Item> cartItems(){
+        return cartItems;
     }
 }

@@ -1,5 +1,6 @@
 package com.thoughtworks.CartApp;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -11,32 +12,38 @@ import static org.hamcrest.Matchers.*;
 @ExtendWith(MockitoExtension.class)
 public class CartRepositoryTest {
 
+    private CartRepository repository;
+    private Item itemOne;
+    private Item itemTwo;
+
+    @BeforeEach
+    void setUp(){
+        repository = new CartRepository();
+        itemOne = new Item("Pencil", 20);
+        itemTwo = new Item("Erasure", 5);
+    }
+
     @Test
     void shouldAddItemToCart() {
-        CartRepository repository = new CartRepository();
-        Item newItem = new Item("Lollypop", 5);
 
-        repository.add(newItem);
+        repository.add(itemOne);
 
-        assertThat(repository.contains(newItem), is(equalTo(Boolean.FALSE)));
+        assertThat(repository.contains(itemOne), is(equalTo(Boolean.TRUE)));
     }
 
     @Test
     void shouldDeleteItemInTheCart(){
-        CartRepository repository = new CartRepository();
-        Item item = new Item("Pencil", 10);
-        repository.add(item);
+        repository.add(itemOne);
 
-        repository.remove(item);
+        repository.remove(itemOne);
 
-        assertThat(repository.contains(item), is(equalTo(Boolean.FALSE)));
+        assertThat(repository.contains(itemOne), is(equalTo(Boolean.FALSE)));
     }
 
     @Test
     void shouldReturnTwentyFiveAsTotalCostOfPencilWorthRupeesTwentyAndErasureWorthRupeesFive() {
-        CartRepository repository = new CartRepository();
-        repository.add(new Item("Pencil", 20));
-        repository.add(new Item("Erasure", 5));
+        repository.add(itemOne);
+        repository.add(itemTwo);
 
         assertThat(repository.totalCost(), is(closeTo(25, 0.001)));
     }
