@@ -1,11 +1,11 @@
 package com.thoughtworks.CartApp;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -42,7 +42,7 @@ public class CartControllerTest {
     }
 
     @Test
-    void shouldReturnListOfItemsWhenRequestIsSentToRetrieveAllItems() throws Exception {
+    void shouldReturnListOfItems() throws Exception {
         ArrayList<Item> itemList = new ArrayList<>(){
             {
                 add(itemPencil);
@@ -53,8 +53,6 @@ public class CartControllerTest {
 
         mockMvc.perform(get("/cart/items"))
                 .andExpect(content().json(new ObjectMapper().writeValueAsString(itemList)))
-                .andExpect(status().isAccepted());
+                .andExpect(status().isOk());
     }
-
-
 }

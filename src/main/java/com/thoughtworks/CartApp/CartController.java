@@ -17,7 +17,7 @@ public class CartController {
     private CartService cartService;
 
     @GetMapping("cart/items")
-    @ResponseStatus(ACCEPTED)
+    @ResponseStatus(OK)
     public ArrayList<Item> getAllItems(){
         return cartService.viewItems();
     }
