@@ -50,4 +50,14 @@ public class CartServiceTest {
 
         verify(cartRepository, times(1)).remove(itemPencil);
     }
+
+    @Test
+    void shouldNotCallRemoveMethodOfCartRepositoryWhenTheItemIsNotAvailableInTheCart() {
+        Item itemScale = new Item("Scale", 15);
+        when(cartRepository.contains(itemScale)).thenReturn(false);
+
+        cartService.deleteItem(itemScale);
+
+        verify(cartRepository, never()).remove(itemScale);
+    }
 }
