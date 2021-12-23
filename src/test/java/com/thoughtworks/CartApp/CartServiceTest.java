@@ -6,17 +6,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@WebMvcTest
+
 @ExtendWith(MockitoExtension.class)
 public class CartServiceTest {
     @Mock
-    private CartRepository cartRepository;
+    private ItemRepository cartRepository;
 
     @InjectMocks
     private CartService cartService;
@@ -35,6 +33,7 @@ public class CartServiceTest {
         verify(cartRepository, times(1)).add(itemPencil);
     }
 
+    @Test
     void shouldCallRemoveMethodOfCartRepositoryWhenItemIsBeingDeleted(){
         cartService.addItem(itemPencil);
         cartService.deleteItem(itemPencil);

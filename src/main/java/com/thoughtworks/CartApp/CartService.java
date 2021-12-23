@@ -3,10 +3,12 @@ package com.thoughtworks.CartApp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service
 public class CartService {
     @Autowired
-    CartRepository cartRepository;
+    ItemRepository cartRepository;
 
     public void addItem(Item item){
         if(cartRepository.contains(item)){
@@ -21,4 +23,10 @@ public class CartService {
         }
         cartRepository.remove(item);
     }
+
+    public ArrayList<Item> getItems(){
+        return cartRepository.cartItems();
+    }
+
+
 }
