@@ -27,4 +27,8 @@ public class CartService {
     ArrayList<Item> viewItems(){
         return cartRepository.cartItems();
     }
+
+    public double totalCost() {
+        return cartRepository.totalCost();
+    }
 }

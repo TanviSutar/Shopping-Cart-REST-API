@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -79,5 +78,12 @@ public class CartServiceTest {
         ArrayList<Item> actualItemList = cartService.viewItems();
 
         assertThat(actualItemList, is(equalTo(expectedItemList)));
+    }
+
+    @Test
+    void shouldReturnTwentyFiveAsTotalCostWhenCartHasPencilWorthTwentyRupeesAndErasureWorthFiveRupees() {
+        when(cartRepository.totalCost()).thenReturn(25.0);
+
+        assertThat(cartService.totalCost(), is(equalTo(25.0)));
     }
 }
