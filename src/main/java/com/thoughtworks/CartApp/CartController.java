@@ -21,7 +21,12 @@ public class CartController {
     @PostMapping("/cart/items/{id}")
     @ResponseStatus(CREATED)
     public void addItem(@PathVariable int id, @RequestBody Item item){
-        System.out.println("Hello");
         cartService.addItem(item);
+    }
+
+    @DeleteMapping("/cart/items/{id}")
+    @ResponseStatus(OK)
+    public void deleteItem(@PathVariable int id, @RequestBody Item item){
+        cartService.deleteItem(item);
     }
 }

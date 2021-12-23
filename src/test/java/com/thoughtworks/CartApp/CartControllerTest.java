@@ -54,11 +54,12 @@ public class CartControllerTest {
         mockMvc.perform(get("/cart/items"))
                 .andExpect(content().json(new ObjectMapper().writeValueAsString(itemList)))
                 .andExpect(status().isOk());
+
+        verify(cartService).viewItems();
     }
 
     @Test
     void shouldAddItemToCart() throws Exception {
-        Item itemPencil = new Item("Pencil", 20);
 
         mockMvc.perform(post("/cart/items/{id}", itemPencil.getId())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -67,4 +68,16 @@ public class CartControllerTest {
 
         verify(cartService).addItem(itemPencil);
     }
+
+    @Test
+    void shouldRemoveItemFromCart() throws Exception {
+        mockMvc.perform(delete("/cart/items/{id}", itemPencil.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(itemPencil)))
+                        .andExpect(status().isOk());
+
+        verify(cartService).deleteItem(itemPencil);
+    }
+
+
 }
