@@ -10,8 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
 
@@ -32,10 +31,10 @@ public class CartServiceTest {
 
     @Test
     void shouldCallAddMethodOfCartRepositoryWhenValidItemIsBeingAdded() {
-        Item itemErasure = new Item("Erasure", 20);
-        cartService.addItem(itemErasure);
+        Item itemEraser = new Item("Eraser", 20);
+        cartService.addItem(itemEraser);
 
-        verify(cartRepository, times(1)).add(itemErasure);
+        verify(cartRepository, times(1)).add(itemEraser);
     }
 
     @Test
@@ -86,4 +85,5 @@ public class CartServiceTest {
 
         assertThat(cartService.totalCost(), is(equalTo(25.0)));
     }
+
 }

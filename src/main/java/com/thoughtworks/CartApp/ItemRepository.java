@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 @Repository
 public class ItemRepository {
-
     private final ArrayList<Item> cartItems;
 
     ItemRepository() {

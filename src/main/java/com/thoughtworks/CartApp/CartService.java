@@ -28,7 +28,7 @@ public class CartService {
         return cartRepository.cartItems();
     }
 
-    public double totalCost() {
+    double totalCost() {
         return cartRepository.totalCost();
     }
 }
