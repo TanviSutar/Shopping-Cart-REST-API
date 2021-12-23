@@ -24,7 +24,7 @@ public class CartServiceTest {
     private Item itemPencil;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         itemPencil = new Item("Pencil", 20);
     }
 
@@ -46,7 +46,7 @@ public class CartServiceTest {
     }
 
     @Test
-    void shouldCallRemoveMethodOfCartRepositoryWhenItemIsBeingDeleted(){
+    void shouldCallRemoveMethodOfCartRepositoryWhenItemIsBeingDeleted() {
         when(cartRepository.contains(itemPencil)).thenReturn(true);
 
         cartService.deleteItem(itemPencil);
@@ -66,7 +66,7 @@ public class CartServiceTest {
 
     @Test
     void shouldReturnAllCartItemsWhenAllItemsNeedToBeViewed() {
-        ArrayList<Item> expectedItemList = new ArrayList<>(){
+        ArrayList<Item> expectedItemList = new ArrayList<>() {
             {
                 add(itemPencil);
             }

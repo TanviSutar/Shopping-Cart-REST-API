@@ -1,6 +1,5 @@
 package com.thoughtworks.CartApp;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,14 +35,14 @@ public class CartControllerTest {
     private Item itemEraser;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         itemPencil = new Item("Pencil", 20);
         itemEraser = new Item("Eraser", 5);
     }
 
     @Test
     void shouldReturnListOfItems() throws Exception {
-        ArrayList<Item> itemList = new ArrayList<>(){
+        ArrayList<Item> itemList = new ArrayList<>() {
             {
                 add(itemPencil);
                 add(itemEraser);
@@ -64,7 +63,7 @@ public class CartControllerTest {
         mockMvc.perform(post("/cart/items/{id}", itemPencil.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemPencil)))
-                        .andExpect(status().isCreated());
+                .andExpect(status().isCreated());
 
         verify(cartService).addItem(itemPencil);
     }
@@ -74,10 +73,19 @@ public class CartControllerTest {
         mockMvc.perform(delete("/cart/items/{id}", itemPencil.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemPencil)))
-                        .andExpect(status().isOk());
+                .andExpect(status().isOk());
 
         verify(cartService).deleteItem(itemPencil);
     }
 
+    @Test
+    void shouldReturnTwentyFiveAsTotalCostWhenPencilWorthTwentyRupeesAndEraserWorthFiveRupeesIsAddedToTheCart() throws Exception {
+        when(cartService.totalCost()).thenReturn(25.0);
 
+        mockMvc.perform(get("/cart/total-item-cost"))
+                .andExpect(content().json(new ObjectMapper().writeValueAsString(25.0)))
+                .andExpect(status().isOk());
+
+        verify(cartService).totalCost();
+    }
 }

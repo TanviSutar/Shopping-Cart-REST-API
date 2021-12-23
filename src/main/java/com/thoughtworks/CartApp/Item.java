@@ -3,9 +3,9 @@ package com.thoughtworks.CartApp;
 import java.util.Objects;
 
 public class Item {
-    private int id;
-    private String name;
-    private double cost;
+    private final int id;
+    private final String name;
+    private final double cost;
     private static int idCount;
 
     public Item(String name, double cost) {
@@ -18,21 +18,13 @@ public class Item {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public double getCost() {
         return cost;
     }
 
-    public void setCost(double cost) {
-        this.cost = cost;
+    public int getId() {
+        return id;
     }
-
-    public int getId() { return id; }
-
-    public void setId(int id) { this.id = id; }
 
     @Override
     public boolean equals(Object o) {

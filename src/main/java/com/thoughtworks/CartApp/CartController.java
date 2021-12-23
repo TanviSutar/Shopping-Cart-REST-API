@@ -14,19 +14,25 @@ public class CartController {
 
     @GetMapping("cart/items")
     @ResponseStatus(OK)
-    public ArrayList<Item> getAllItems(){
+    public ArrayList<Item> getAllItems() {
         return cartService.viewItems();
+    }
+
+    @GetMapping("/cart/total-item-cost")
+    @ResponseStatus(OK)
+    public double totalCostOfItemsInCart() {
+        return cartService.totalCost();
     }
 
     @PostMapping("/cart/items/{id}")
     @ResponseStatus(CREATED)
-    public void addItem(@PathVariable int id, @RequestBody Item item){
+    public void addItem(@PathVariable int id, @RequestBody Item item) {
         cartService.addItem(item);
     }
 
     @DeleteMapping("/cart/items/{id}")
     @ResponseStatus(OK)
-    public void deleteItem(@PathVariable int id, @RequestBody Item item){
+    public void deleteItem(@PathVariable int id, @RequestBody Item item) {
         cartService.deleteItem(item);
     }
 }
