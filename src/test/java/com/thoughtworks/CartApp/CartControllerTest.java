@@ -10,10 +10,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -37,8 +39,6 @@ public class CartControllerTest {
     void setUp(){
         itemPencil = new Item("Pencil", 20);
         itemEraser = new Item("Eraser", 5);
-        cartService.addItem(itemPencil);
-        cartService.addItem(itemEraser);
     }
 
     @Test
@@ -54,5 +54,17 @@ public class CartControllerTest {
         mockMvc.perform(get("/cart/items"))
                 .andExpect(content().json(new ObjectMapper().writeValueAsString(itemList)))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldAddItemToCart() throws Exception {
+        Item itemPencil = new Item("Pencil", 20);
+
+        mockMvc.perform(post("/cart/items/{id}", itemPencil.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(itemPencil)))
+                        .andExpect(status().isCreated());
+
+        verify(cartService).addItem(itemPencil);
     }
 }
