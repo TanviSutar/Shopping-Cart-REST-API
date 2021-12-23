@@ -8,25 +8,23 @@ import java.util.ArrayList;
 @Service
 public class CartService {
     @Autowired
-    ItemRepository cartRepository;
+    private ItemRepository cartRepository;
 
-    public void addItem(Item item){
+    void addItem(Item item){
         if(cartRepository.contains(item)){
             return;
         }
         cartRepository.add(item);
     }
 
-    public void deleteItem(Item item){
+    void deleteItem(Item item){
         if(!cartRepository.contains(item)){
             return;
         }
         cartRepository.remove(item);
     }
 
-    public ArrayList<Item> getItems(){
+    ArrayList<Item> viewItems(){
         return cartRepository.cartItems();
     }
-
-
 }
