@@ -7,6 +7,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 
 
@@ -59,5 +65,19 @@ public class CartServiceTest {
         cartService.deleteItem(itemScale);
 
         verify(cartRepository, never()).remove(itemScale);
+    }
+
+    @Test
+    void shouldReturnAllCartItemsWhenAllItemsNeedToBeViewed() {
+        ArrayList<Item> expectedItemList = new ArrayList<>(){
+            {
+                add(itemPencil);
+            }
+        };
+        when(cartRepository.cartItems()).thenReturn(expectedItemList);
+
+        ArrayList<Item> actualItemList = cartService.viewItems();
+
+        assertThat(actualItemList, is(equalTo(expectedItemList)));
     }
 }
