@@ -46,31 +46,31 @@ public class CartServiceTest {
         Item itemScale = new Item("Scale", 15);
         cartService.addItem(itemScale);
 
-        verify(cartRepository, times(1)).add(itemScale);
+        verify(cartRepository, times(1)).add(any());
     }
 
     @Test
     void shouldNotCallAddMethodOfCartRepositoryWhenDuplicateItemIsBeingAdded() {
-        when(cartRepository.contains(itemPencil)).thenReturn(true);
+        when(cartRepository.contains(any())).thenReturn(true);
 
         cartService.addItem(itemPencil);
 
-        verify(cartRepository, never()).add(itemPencil);
+        verify(cartRepository, never()).add(any());
     }
 
     @Test
     void shouldCallRemoveMethodOfCartRepositoryWhenItemIsBeingDeleted() {
-        when(cartRepository.contains(itemPencil)).thenReturn(true);
+        when(cartRepository.contains(any())).thenReturn(true);
 
         cartService.deleteItem(itemPencil);
 
-        verify(cartRepository, times(1)).remove(itemPencil);
+        verify(cartRepository, times(1)).remove(any());
     }
 
     @Test
     void shouldNotCallRemoveMethodOfCartRepositoryWhenTheItemIsNotAvailableInTheCart() {
         Item itemScale = new Item("Scale", 15);
-        when(cartRepository.contains(itemScale)).thenReturn(false);
+        when(cartRepository.contains(any())).thenReturn(false);
 
         cartService.deleteItem(itemScale);
 

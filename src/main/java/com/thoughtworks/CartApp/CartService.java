@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 @Service
 public class CartService {
@@ -11,17 +12,19 @@ public class CartService {
     private ItemRepository cartRepository;
 
     void addItem(Item item) {
-        if (cartRepository.contains(item)) {
+        Item processedItem = new Item(item.getName().toLowerCase(), item.getCost());
+        if (cartRepository.contains(processedItem)) {
             return;
         }
-        cartRepository.add(item);
+        cartRepository.add(processedItem);
     }
 
     void deleteItem(Item item) {
-        if (!cartRepository.contains(item)) {
+        Item processedItem = new Item(item.getName().toLowerCase(), item.getCost());
+        if (!cartRepository.contains(processedItem)) {
             return;
         }
-        cartRepository.remove(item);
+        cartRepository.remove(processedItem);
     }
 
     Cart viewItems() {

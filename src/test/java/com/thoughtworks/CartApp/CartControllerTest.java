@@ -68,7 +68,7 @@ public class CartControllerTest {
         mockMvc.perform(post("/cart/items/{id}", itemPencil.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemPencil)))
-                .andExpect(status().isCreated());
+                        .andExpect(status().isCreated());
 
         verify(cartService).addItem(itemPencil);
     }
@@ -78,7 +78,7 @@ public class CartControllerTest {
         mockMvc.perform(delete("/cart/items/{id}", itemPencil.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemPencil)))
-                .andExpect(status().isOk());
+                        .andExpect(status().isOk());
 
         verify(cartService).deleteItem(itemPencil);
     }
@@ -99,8 +99,10 @@ public class CartControllerTest {
     void shouldReturnBadRequestStatusCodeWhenItemNameOfTheItemBeingPostedIsEmptyString() throws Exception {
         Item itemWithNoName = new Item("", 60.0);
 
-        mockMvc.perform(post("/cart/items/{id}", itemWithNoName.getId()))
-                .andExpect(status().isBadRequest());
+        mockMvc.perform(post("/cart/items/{id}", itemWithNoName.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(itemWithNoName)))
+                        .andExpect(status().isBadRequest());
 
         verify(cartService, never()).addItem(itemWithNoName);
     }

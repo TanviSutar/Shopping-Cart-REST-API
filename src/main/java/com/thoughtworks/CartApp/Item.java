@@ -8,7 +8,7 @@ public class Item {
     private final double cost;
     private static int idCount;
 
-    public Item(String name, double cost) {
+    Item(String name, double cost) {
         this.name = name;
         this.cost = cost;
         this.id = idCount++;
@@ -31,11 +31,11 @@ public class Item {
         if (this == o) return true;
         if (!(o instanceof Item)) return false;
         Item item = (Item) o;
-        return Double.compare(item.cost, cost) == 0 && name.equals(item.name);
+        return name.equals(item.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, cost);
+        return Objects.hash(name);
     }
 }
