@@ -15,26 +15,28 @@ public class CartController {
 
     @GetMapping("cart/items")
     @ResponseStatus(OK)
-    public Cart getAllItems() { return cartService.viewItems(); }
+    public Cart viewAllItems() {
+        return cartService.viewItems();
+    }
 
     @PostMapping("/cart/items/{id}")
     public ResponseEntity<String> addItem(@PathVariable int id, @RequestBody Item item) {
-        if(item.getName().equals("") || item.getName().trim().length() == 0) {
+        if (item.getName().equals("") || item.getName().trim().length() == 0) {
             return new ResponseEntity<>("Invalid Item: Item should have a valid name.", BAD_REQUEST);
         }
 
         Pattern specialCharacters = Pattern.compile("[^A-Za-z0-9\\s\\t]");
-        if(specialCharacters.matcher(item.getName()).find()){
+        if (specialCharacters.matcher(item.getName()).find()) {
             return new ResponseEntity<>("Invalid Item: Item name should not contain special characters(Eg: ?, @, etc).", BAD_REQUEST);
         }
 
         cartService.addItem(item);
-        return new ResponseEntity<>(item.getName()+" added to the cart.", CREATED);
+        return new ResponseEntity<>(item.getName() + " added to the cart.", CREATED);
     }
 
     @DeleteMapping("/cart/items/{id}")
     public ResponseEntity<String> deleteItem(@PathVariable int id, @RequestBody Item item) {
         cartService.deleteItem(item);
-        return new ResponseEntity<>(item.getName()+" deleted from the cart.", OK);
+        return new ResponseEntity<>(item.getName() + " deleted from the cart.", OK);
     }
 }

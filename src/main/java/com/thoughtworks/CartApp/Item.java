@@ -1,5 +1,6 @@
 package com.thoughtworks.CartApp;
 
+import java.util.Locale;
 import java.util.Objects;
 
 public class Item {
@@ -9,7 +10,7 @@ public class Item {
     private static int idCount;
 
     Item(String name, double cost) {
-        this.name = name;
+        this.name = name.toLowerCase(Locale.ROOT);
         this.cost = cost;
         this.id = idCount++;
     }
@@ -31,7 +32,7 @@ public class Item {
         if (this == o) return true;
         if (!(o instanceof Item)) return false;
         Item item = (Item) o;
-        return name.equals(item.name);
+        return name.equalsIgnoreCase(item.name);
     }
 
     @Override

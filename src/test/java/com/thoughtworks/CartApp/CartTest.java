@@ -16,8 +16,8 @@ public class CartTest {
     private double totalCost;
 
     @BeforeEach
-    void setUp(){
-        items = new ArrayList<>(){
+    void setUp() {
+        items = new ArrayList<>() {
             {
                 add(new Item("Apple", 50.0));
                 add(new Item("Orange", 90.50));

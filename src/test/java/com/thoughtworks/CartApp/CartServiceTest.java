@@ -6,10 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -32,7 +32,7 @@ public class CartServiceTest {
     void setUp() {
         itemPencil = new Item("Pencil", 20);
         itemEraser = new Item("Erasure", 5);
-        itemList = new ArrayList<>(){
+        itemList = new ArrayList<>() {
             {
                 add(itemPencil);
                 add(itemEraser);

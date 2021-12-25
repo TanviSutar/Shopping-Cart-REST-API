@@ -24,14 +24,6 @@ public class ItemRepository {
         cartItems.remove(givenItem);
     }
 
-    double totalCost() {
-        double total = 0;
-        for (Item item : cartItems) {
-            total += item.getCost();
-        }
-        return total;
-    }
-
     Cart getCart() {
         return new Cart(cartItems);
     }

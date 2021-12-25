@@ -1,6 +1,5 @@
 package com.thoughtworks.CartApp;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -68,7 +66,7 @@ public class CartControllerTest {
         mockMvc.perform(post("/cart/items/{id}", itemPencil.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemPencil)))
-                        .andExpect(status().isCreated());
+                .andExpect(status().isCreated());
 
         verify(cartService).addItem(itemPencil);
     }
@@ -78,7 +76,7 @@ public class CartControllerTest {
         mockMvc.perform(delete("/cart/items/{id}", itemPencil.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemPencil)))
-                        .andExpect(status().isOk());
+                .andExpect(status().isOk());
 
         verify(cartService).deleteItem(itemPencil);
     }
@@ -96,13 +94,25 @@ public class CartControllerTest {
     }
 
     @Test
-    void shouldReturnBadRequestStatusCodeWhenItemNameOfTheItemBeingPostedIsEmptyString() throws Exception {
+    void shouldReturnBadRequestStatusCodeWhenItemNameIsEmptyString() throws Exception {
         Item itemWithNoName = new Item("", 60.0);
 
         mockMvc.perform(post("/cart/items/{id}", itemWithNoName.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemWithNoName)))
-                        .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest());
+
+        verify(cartService, never()).addItem(itemWithNoName);
+    }
+
+    @Test
+    void shouldReturnBadRequestStatusCodeWhenItemNameHasAtLeastOneSpecialCharacter() throws Exception {
+        Item itemWithNoName = new Item("", 60.0);
+
+        mockMvc.perform(post("/cart/items/{id}", itemWithNoName.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(itemWithNoName)))
+                .andExpect(status().isBadRequest());
 
         verify(cartService, never()).addItem(itemWithNoName);
     }

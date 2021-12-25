@@ -3,28 +3,23 @@ package com.thoughtworks.CartApp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Locale;
-
 @Service
 public class CartService {
     @Autowired
     private ItemRepository cartRepository;
 
     void addItem(Item item) {
-        Item processedItem = new Item(item.getName().toLowerCase(), item.getCost());
-        if (cartRepository.contains(processedItem)) {
+        if (cartRepository.contains(item)) {
             return;
         }
-        cartRepository.add(processedItem);
+        cartRepository.add(item);
     }
 
     void deleteItem(Item item) {
-        Item processedItem = new Item(item.getName().toLowerCase(), item.getCost());
-        if (!cartRepository.contains(processedItem)) {
+        if (!cartRepository.contains(item)) {
             return;
         }
-        cartRepository.remove(processedItem);
+        cartRepository.remove(item);
     }
 
     Cart viewItems() {
