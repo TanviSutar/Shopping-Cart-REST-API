@@ -1,5 +1,6 @@
 package com.thoughtworks.CartApp;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,8 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -93,5 +93,15 @@ public class CartControllerTest {
 
         verify(cartService).viewItems();
         assertThat(cart.getTotalCost(), is(equalTo(25.0)));
+    }
+
+    @Test
+    void shouldReturnBadRequestStatusCodeWhenItemNameOfTheItemBeingPostedIsEmptyString() throws Exception {
+        Item itemWithNoName = new Item("", 60.0);
+
+        mockMvc.perform(post("/cart/items/{id}", itemWithNoName.getId()))
+                .andExpect(status().isBadRequest());
+
+        verify(cartService, never()).addItem(itemWithNoName);
     }
 }
