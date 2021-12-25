@@ -32,4 +32,13 @@ public class IntegrationTest {
                 .andExpect(content().json(new ObjectMapper().writeValueAsString(new Cart(new ArrayList<Item>()))))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void shouldAddItemToTheCart() throws Exception {
+        Item itemLettuce = new Item("Lettuce", 40.0);
+        mockMvc.perform(post("/cart/items/{id}", itemLettuce.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(itemLettuce)))
+                .andExpect(status().isCreated());
+    }
 }
