@@ -19,8 +19,8 @@ public class CartController {
         return cartService.viewItems();
     }
 
-    @PostMapping("/cart/items/{id}")
-    public ResponseEntity<String> addItem(@PathVariable int id, @RequestBody Item item) {
+    @PostMapping("/cart/items/{name}")
+    public ResponseEntity<String> addItem(@PathVariable String name, @RequestBody Item item) {
         if (item.getName().equals("") || item.getName().trim().length() == 0) {
             return new ResponseEntity<>("Invalid Item: Item should have a valid name.", BAD_REQUEST);
         }
@@ -34,8 +34,8 @@ public class CartController {
         return new ResponseEntity<>(item.getName() + " added to the cart.", CREATED);
     }
 
-    @DeleteMapping("/cart/items/{id}")
-    public ResponseEntity<String> deleteItem(@PathVariable int id, @RequestBody Item item) {
+    @DeleteMapping("/cart/items/{name}")
+    public ResponseEntity<String> deleteItem(@PathVariable String name, @RequestBody Item item) {
         cartService.deleteItem(item);
         return new ResponseEntity<>(item.getName() + " deleted from the cart.", OK);
     }

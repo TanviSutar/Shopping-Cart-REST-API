@@ -41,40 +41,47 @@ public class IntegrationTest {
                 add(itemEraser);
             }
         });
-        mockMvc.perform(post("/cart/items/{id}", itemPencil.getId())
+        mockMvc.perform(post("/cart/items/{name}", itemPencil.getName())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemPencil)))
-                .andExpect(status().isCreated());
+                        .andExpect(status().isCreated());
 
-        mockMvc.perform(post("/cart/items/{id}", itemEraser.getId())
+        mockMvc.perform(post("/cart/items/{name}", itemEraser.getName())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemEraser)))
-                .andExpect(status().isCreated());
+                        .andExpect(status().isCreated());
     }
 
     @Test
     @Disabled
     void shouldReturnEmptyItemListBeforeAnyItemIsAddedToTheCart() throws Exception {
         mockMvc.perform(get("/cart/items"))
-                .andExpect(content().json(new ObjectMapper().writeValueAsString(new Cart(new ArrayList<Item>()))))
+                        .andExpect(content().json(new ObjectMapper().writeValueAsString(new Cart(new ArrayList<Item>()))))
+                        .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldReturnListOfAllItemsInTheCart() throws Exception {
+        mockMvc.perform(get("/cart/items")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(new ObjectMapper().writeValueAsString(cart)))
                 .andExpect(status().isOk());
     }
 
     @Test
     void shouldAddItemToTheCart() throws Exception {
         Item itemLettuce = new Item("Lettuce", 40.0);
-        mockMvc.perform(post("/cart/items/{id}", itemLettuce.getId())
+        mockMvc.perform(post("/cart/items/{name}", itemLettuce.getName())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemLettuce)))
-                .andExpect(status().isCreated());
+                        .andExpect(status().isCreated());
     }
 
     @Test
-    void shouldReturnListOfAllItemsInTheCart() throws Exception {
-
-        mockMvc.perform(get("/cart/items")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(new ObjectMapper().writeValueAsString(cart)))
-                .andExpect(status().isOk());
+    void shouldDeleteItemFromTheCart() throws Exception {
+        mockMvc.perform(delete("/cart/items/{name}", itemPencil.getName())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(itemPencil)))
+                        .andExpect(status().isOk());
     }
 }

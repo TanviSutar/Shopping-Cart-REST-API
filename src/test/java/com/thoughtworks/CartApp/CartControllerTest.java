@@ -63,7 +63,7 @@ public class CartControllerTest {
     @Test
     void shouldAddItemToCart() throws Exception {
 
-        mockMvc.perform(post("/cart/items/{id}", itemPencil.getId())
+        mockMvc.perform(post("/cart/items/{name}", itemPencil.getName())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemPencil)))
                 .andExpect(status().isCreated());
@@ -73,7 +73,7 @@ public class CartControllerTest {
 
     @Test
     void shouldRemoveItemFromCart() throws Exception {
-        mockMvc.perform(delete("/cart/items/{id}", itemPencil.getId())
+        mockMvc.perform(delete("/cart/items/{name}", itemPencil.getName())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemPencil)))
                 .andExpect(status().isOk());
@@ -95,9 +95,9 @@ public class CartControllerTest {
 
     @Test
     void shouldReturnBadRequestStatusCodeWhenItemNameIsEmptyString() throws Exception {
-        Item itemWithNoName = new Item("", 60.0);
+        Item itemWithNoName = new Item(" ", 60.0);
 
-        mockMvc.perform(post("/cart/items/{id}", itemWithNoName.getId())
+        mockMvc.perform(post("/cart/items/{name}", itemWithNoName.getName())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemWithNoName)))
                 .andExpect(status().isBadRequest());
@@ -107,9 +107,9 @@ public class CartControllerTest {
 
     @Test
     void shouldReturnBadRequestStatusCodeWhenItemNameHasAtLeastOneSpecialCharacter() throws Exception {
-        Item itemWithNoName = new Item("", 60.0);
+        Item itemWithNoName = new Item("Sug@r", 60.0);
 
-        mockMvc.perform(post("/cart/items/{id}", itemWithNoName.getId())
+        mockMvc.perform(post("/cart/items/{name}", itemWithNoName.getName())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemWithNoName)))
                 .andExpect(status().isBadRequest());
