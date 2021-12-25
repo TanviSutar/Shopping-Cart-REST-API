@@ -24,7 +24,7 @@ public class CartTest {
             }
         };
         totalCost = 140.50;
-        cart = new Cart(items, totalCost);
+        cart = new Cart(items);
     }
 
     @Test

@@ -49,13 +49,13 @@ public class ItemRepositoryTest {
                 add(itemErasure);
             }
         };
-        ArrayList<Item> actualItems = repository.cartItems();
+        ArrayList<Item> actualItems = repository.getCart().getItems();
 
         assertThat(expectedItems, is(equalTo(actualItems)));
     }
 
     @Test
     void shouldReturnTwentyFiveAsTotalCostOfPencilWorthRupeesTwentyAndErasureWorthRupeesFive() {
-        assertThat(repository.totalCost(), is(closeTo(25, 0.001)));
+        assertThat(repository.getCart().getTotalCost(), is(closeTo(25.0, 0.01)));
     }
 }

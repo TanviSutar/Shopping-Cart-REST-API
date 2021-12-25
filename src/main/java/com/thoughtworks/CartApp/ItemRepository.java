@@ -32,7 +32,7 @@ public class ItemRepository {
         return total;
     }
 
-    ArrayList<Item> cartItems() {
-        return cartItems;
+    Cart getCart() {
+        return new Cart(cartItems);
     }
 }

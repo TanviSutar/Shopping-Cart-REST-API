@@ -24,11 +24,7 @@ public class CartService {
         cartRepository.remove(item);
     }
 
-    ArrayList<Item> viewItems() {
-        return cartRepository.cartItems();
-    }
-
-    double totalCost() {
-        return cartRepository.totalCost();
+    Cart viewItems() {
+        return cartRepository.getCart();
     }
 }

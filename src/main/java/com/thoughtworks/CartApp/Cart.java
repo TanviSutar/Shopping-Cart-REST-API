@@ -4,11 +4,14 @@ import java.util.ArrayList;
 
 public class Cart{
     private final ArrayList<Item> items;
-    private final double totalCost;
+    private double totalCost;
 
-    public Cart(ArrayList<Item> items, double totalCost) {
+    public Cart(ArrayList<Item> items) {
         this.items = items;
-        this.totalCost = totalCost;
+        totalCost = 0.0;
+        for(Item item: items){
+            totalCost += item.getCost();
+        }
     }
 
     public ArrayList<Item> getItems() {

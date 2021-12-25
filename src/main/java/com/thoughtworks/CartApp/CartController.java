@@ -14,15 +14,15 @@ public class CartController {
 
     @GetMapping("cart/items")
     @ResponseStatus(OK)
-    public ArrayList<Item> getAllItems() {
+    public Cart getAllItems() {
         return cartService.viewItems();
     }
 
-    @GetMapping("/cart/total-item-cost")
-    @ResponseStatus(OK)
-    public double totalCostOfItemsInCart() {
-        return cartService.totalCost();
-    }
+//    @GetMapping("/cart/total-item-cost")
+//    @ResponseStatus(OK)
+//    public double totalCostOfItemsInCart() {
+//        return cartService.totalCost();
+//    }
 
     @PostMapping("/cart/items/{id}")
     @ResponseStatus(CREATED)

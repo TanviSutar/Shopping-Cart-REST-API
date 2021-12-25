@@ -14,6 +14,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -33,25 +37,26 @@ public class CartControllerTest {
 
     private Item itemPencil;
     private Item itemEraser;
+    private Cart cart;
 
     @BeforeEach
     void setUp() {
         itemPencil = new Item("Pencil", 20);
         itemEraser = new Item("Eraser", 5);
-    }
-
-    @Test
-    void shouldReturnListOfItems() throws Exception {
-        ArrayList<Item> itemList = new ArrayList<>() {
+        cart = new Cart(new ArrayList<>() {
             {
                 add(itemPencil);
                 add(itemEraser);
             }
-        };
-        when(cartService.viewItems()).thenReturn(itemList);
+        });
+    }
+
+    @Test
+    void shouldReturnListOfItems() throws Exception {
+        when(cartService.viewItems()).thenReturn(cart);
 
         mockMvc.perform(get("/cart/items"))
-                .andExpect(content().json(new ObjectMapper().writeValueAsString(itemList)))
+                .andExpect(content().json(new ObjectMapper().writeValueAsString(cart)))
                 .andExpect(status().isOk());
 
         verify(cartService).viewItems();
@@ -80,12 +85,13 @@ public class CartControllerTest {
 
     @Test
     void shouldReturnTwentyFiveAsTotalCostWhenPencilWorthTwentyRupeesAndEraserWorthFiveRupeesIsAddedToTheCart() throws Exception {
-        when(cartService.totalCost()).thenReturn(25.0);
+        when(cartService.viewItems()).thenReturn(cart);
 
-        mockMvc.perform(get("/cart/total-item-cost"))
-                .andExpect(content().json(new ObjectMapper().writeValueAsString(25.0)))
+        mockMvc.perform(get("/cart/items"))
+                .andExpect(content().json(new ObjectMapper().writeValueAsString(cart)))
                 .andExpect(status().isOk());
 
-        verify(cartService).totalCost();
+        verify(cartService).viewItems();
+        assertThat(cart.getTotalCost(), is(equalTo(25.0)));
     }
 }
