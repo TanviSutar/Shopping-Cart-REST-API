@@ -20,6 +20,15 @@ public class CartController {
         return cartService.viewItems();
     }
 
+    @GetMapping("/cart/items/{id}")
+    public ResponseEntity<String> getItemById(@PathVariable int id){
+        Item requiredItem = cartService.getItemById(id);
+        if(requiredItem == null){
+            return new ResponseEntity<>("No item with the given id found", BAD_REQUEST);
+        }
+        return new ResponseEntity<>("Item: "+requiredItem.getName()+"\nCost: "+requiredItem.getCost(), OK);
+    }
+
     @PostMapping("/cart/items")
     public ResponseEntity<String> addItem(@RequestBody Item item) {
         if (item.getName().equals("") || item.getName().trim().length() == 0) {

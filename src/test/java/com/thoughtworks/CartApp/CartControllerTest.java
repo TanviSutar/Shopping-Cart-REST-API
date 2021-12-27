@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -114,20 +116,31 @@ public class CartControllerTest {
         mockMvc.perform(post("/cart/items")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemWithNoName)))
-                .andExpect(status().isBadRequest());
+                        .andExpect(status().isBadRequest());
 
         verify(cartService, never()).addItem(itemWithNoName);
     }
 
     @Test
     void shouldReturnBadRequestStatusCodeWhenItemNameHasAtLeastOneSpecialCharacter() throws Exception {
-        Item itemWithNoName = new Item("Sug@r", 60.0);
+        Item itemWithSpecialCharacter = new Item("Sug@r", 60.0);
 
         mockMvc.perform(post("/cart/items")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(itemWithNoName)))
-                .andExpect(status().isBadRequest());
+                        .content(new ObjectMapper().writeValueAsString(itemWithSpecialCharacter)))
+                        .andExpect(status().isBadRequest());
 
-        verify(cartService, never()).addItem(itemWithNoName);
+        verify(cartService, never()).addItem(itemWithSpecialCharacter);
+    }
+
+    @Test
+    void shouldReturnItemGivenTheItemId() throws Exception {
+        Item itemRasMalai = new Item("RasMalai", 1000);
+        when(cartService.getItemById(itemRasMalai.getId())).thenReturn(itemRasMalai);
+
+        mockMvc.perform(get("/cart/items/{id}", itemRasMalai.getId()))
+                .andExpect(status().isOk());
+
+        verify(cartService).getItemById(itemRasMalai.getId());
     }
 }

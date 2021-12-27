@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -93,4 +94,10 @@ public class CartServiceTest {
         assertThat(cartService.viewItems().getTotalCost(), is(equalTo(25.0)));
     }
 
+    @Test
+    void shouldReturnItemGivenTheItemId() {
+        when(cartRepository.findById(itemPencil.getId())).thenReturn(Optional.ofNullable(itemPencil));
+
+        assertThat(cartService.getItemById(itemPencil.getId()), is(equalTo(itemPencil)));
+    }
 }

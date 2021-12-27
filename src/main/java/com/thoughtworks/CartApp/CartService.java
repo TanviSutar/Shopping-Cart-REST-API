@@ -3,6 +3,8 @@ package com.thoughtworks.CartApp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CartService {
     @Autowired
@@ -26,5 +28,13 @@ public class CartService {
 
     Cart viewItems() {
         return new Cart(itemRepository.findAll());
+    }
+
+    public Item getItemById(int id) {
+        Optional<Item> item = itemRepository.findById(id);
+        if(item.isPresent()){
+            return item.get();
+        }
+        return null;
     }
 }
