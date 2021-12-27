@@ -1,42 +1,49 @@
 package com.thoughtworks.CartApp;
 
-import java.util.Locale;
+import javax.persistence.Entity;
 import java.util.Objects;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
+@Entity
 public class Item {
-    //private final int id;
-    private final String name;
-    private final double cost;
-    private static int idCount;
 
-    Item(String name, double cost) {
-        this.name = name.toLowerCase(Locale.ROOT);
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    private String name;
+    private double cost;
+
+    public Item(){}
+
+    public Item(String name, double cost) {
+        this.name = name;
         this.cost = cost;
-        //this.id = idCount++;
     }
 
-    public String getName() {
-        return name;
+    public int getId() {
+        return id;
     }
 
     public double getCost() {
         return cost;
     }
 
-//    public int getId() {
-//        return id;
-//    }
+    public String getName() {
+        return name;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Item)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Item item = (Item) o;
-        return name.equalsIgnoreCase(item.name);
+        return Objects.equals(name, item.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(id, name, cost);
     }
 }

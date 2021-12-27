@@ -1,9 +1,11 @@
 package com.thoughtworks.CartApp;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 
@@ -11,34 +13,34 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @ExtendWith(MockitoExtension.class)
+@Disabled
 public class ItemRepositoryTest {
 
+    @Autowired
     private ItemRepository repository;
-    private Item itemPencil;
-    private Item itemErasure;
+
+    @Autowired
+    private Item itemPencil, itemErasure;
 
     @BeforeEach
     void setUp() {
-        repository = new ItemRepository();
-        itemPencil = new Item("Pencil", 20);
-        itemErasure = new Item("Erasure", 5);
-        repository.add(itemPencil);
-        repository.add(itemErasure);
+        repository.save(itemPencil);
+        repository.save(itemErasure);
     }
 
     @Test
     void shouldAddItemToCart() {
         Item itemSharpener = new Item("Sharpener", 10);
-        repository.add(itemSharpener);
+        repository.save(itemSharpener);
 
-        assertThat(repository.contains(itemSharpener), is(equalTo(Boolean.TRUE)));
+        assertThat(repository.existsById(itemSharpener.getId()), is(equalTo(Boolean.TRUE)));
     }
 
     @Test
     void shouldDeleteItemFromTheCart() {
-        repository.remove(itemPencil);
+        repository.deleteById(itemPencil.getId());
 
-        assertThat(repository.contains(itemPencil), is(equalTo(Boolean.FALSE)));
+        assertThat(repository.existsById(itemPencil.getId()), is(equalTo(Boolean.FALSE)));
     }
 
     @Test
@@ -49,13 +51,8 @@ public class ItemRepositoryTest {
                 add(itemErasure);
             }
         };
-        ArrayList<Item> actualItems = repository.getCart().getItems();
+        ArrayList<Item> actualItems = (ArrayList<Item>) repository.findAll();
 
         assertThat(expectedItems, is(equalTo(actualItems)));
-    }
-
-    @Test
-    void shouldReturnTwentyFiveAsTotalCostOfPencilWorthRupeesTwentyAndErasureWorthRupeesFive() {
-        assertThat(repository.getCart().getTotalCost(), is(closeTo(25.0, 0.01)));
     }
 }

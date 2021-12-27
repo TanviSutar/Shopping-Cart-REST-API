@@ -46,49 +46,49 @@ public class CartServiceTest {
         Item itemScale = new Item("Scale", 15);
         cartService.addItem(itemScale);
 
-        verify(cartRepository, times(1)).add(any());
+        verify(cartRepository, times(1)).save(any());
     }
 
     @Test
     void shouldNotCallAddMethodOfCartRepositoryWhenDuplicateItemIsBeingAdded() {
-        when(cartRepository.contains(any())).thenReturn(true);
+        when(cartRepository.existsById(any())).thenReturn(true);
 
         cartService.addItem(itemPencil);
 
-        verify(cartRepository, never()).add(any());
+        verify(cartRepository, never()).save(any());
     }
 
     @Test
     void shouldCallRemoveMethodOfCartRepositoryWhenItemIsBeingDeleted() {
-        when(cartRepository.contains(any())).thenReturn(true);
+        when(cartRepository.existsById(any())).thenReturn(true);
 
-        cartService.deleteItem(itemPencil);
+        cartService.deleteItem(itemPencil.getId());
 
-        verify(cartRepository, times(1)).remove(any());
+        verify(cartRepository, times(1)).deleteById(any());
     }
 
     @Test
     void shouldNotCallRemoveMethodOfCartRepositoryWhenTheItemIsNotAvailableInTheCart() {
         Item itemScale = new Item("Scale", 15);
-        when(cartRepository.contains(any())).thenReturn(false);
+        when(cartRepository.existsById(any())).thenReturn(false);
 
-        cartService.deleteItem(itemScale);
+        cartService.deleteItem(itemScale.getId());
 
-        verify(cartRepository, never()).remove(itemScale);
+        verify(cartRepository, never()).deleteById(itemScale.getId());
     }
 
     @Test
     void shouldReturnAllCartItemsWhenAllItemsNeedToBeViewed() {
-        when(cartRepository.getCart()).thenReturn(cart);
+        when(cartRepository.findAll()).thenReturn(itemList);
 
-        ArrayList<Item> actualItemList = cartService.viewItems().getItems();
+        Iterable<Item> actualItemList = cartService.viewItems().getItems();
 
         assertThat(actualItemList, is(equalTo(itemList)));
     }
 
     @Test
     void shouldReturnTwentyFiveAsTotalCostWhenCartHasPencilWorthTwentyRupeesAndErasureWorthFiveRupees() {
-        when(cartRepository.getCart()).thenReturn(cart);
+        when(cartRepository.findAll()).thenReturn(itemList);
 
         assertThat(cartService.viewItems().getTotalCost(), is(equalTo(25.0)));
     }

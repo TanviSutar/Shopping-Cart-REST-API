@@ -6,23 +6,24 @@ import org.springframework.stereotype.Service;
 @Service
 public class CartService {
     @Autowired
-    private ItemRepository cartRepository;
+    private ItemRepository itemRepository;
 
+    //TODO add exception
     void addItem(Item item) {
-        if (cartRepository.contains(item)) {
+        if (itemRepository.existsById(item.getId())) {
             return;
         }
-        cartRepository.add(item);
+        itemRepository.save(item);
     }
 
-    void deleteItem(Item item) {
-        if (!cartRepository.contains(item)) {
+    void deleteItem(int itemId) {
+        if (!itemRepository.existsById(itemId)) {
             return;
         }
-        cartRepository.remove(item);
+        itemRepository.deleteById(itemId);
     }
 
     Cart viewItems() {
-        return cartRepository.getCart();
+        return new Cart(itemRepository.findAll());
     }
 }

@@ -13,14 +13,15 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
+    //TODO itemDTO
     @GetMapping("cart/items")
     @ResponseStatus(OK)
     public Cart viewAllItems() {
         return cartService.viewItems();
     }
 
-    @PostMapping("/cart/items/{name}")
-    public ResponseEntity<String> addItem(@PathVariable String name, @RequestBody Item item) {
+    @PostMapping("/cart/items")
+    public ResponseEntity<String> addItem(@RequestBody Item item) {
         if (item.getName().equals("") || item.getName().trim().length() == 0) {
             return new ResponseEntity<>("Invalid Item: Item should have a valid name.", BAD_REQUEST);
         }
@@ -34,9 +35,9 @@ public class CartController {
         return new ResponseEntity<>(item.getName() + " added to the cart.", CREATED);
     }
 
-    @DeleteMapping("/cart/items/{name}")
-    public ResponseEntity<String> deleteItem(@PathVariable String name, @RequestBody Item item) {
-        cartService.deleteItem(item);
-        return new ResponseEntity<>(item.getName() + " deleted from the cart.", OK);
+    @DeleteMapping("/cart/items/{id}")
+    public ResponseEntity<String> deleteItem(@PathVariable int id) {
+        cartService.deleteItem(id);
+        return new ResponseEntity<>("Item deleted from the cart.", OK);
     }
 }
