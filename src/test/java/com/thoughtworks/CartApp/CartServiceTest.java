@@ -51,7 +51,7 @@ public class CartServiceTest {
 
     @Test
     void shouldNotCallAddMethodOfCartRepositoryWhenDuplicateItemIsBeingAdded() {
-        when(cartRepository.existsById(any())).thenReturn(true);
+        when(cartRepository.existsByName(any())).thenReturn(true);
 
         cartService.addItem(itemPencil);
 

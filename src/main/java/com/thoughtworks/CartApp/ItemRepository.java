@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface ItemRepository extends CrudRepository<Item, Integer> {}
+public interface ItemRepository extends CrudRepository<Item, Integer> {
+    public boolean existsByName(String name);
+}

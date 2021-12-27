@@ -10,7 +10,7 @@ public class CartService {
 
     //TODO add exception
     void addItem(Item item) {
-        if (itemRepository.existsById(item.getId())) {
+        if(itemRepository.existsByName(item.getName())){
             return;
         }
         itemRepository.save(item);

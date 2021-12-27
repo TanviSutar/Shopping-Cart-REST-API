@@ -2,6 +2,7 @@ package com.thoughtworks.CartApp;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 
@@ -36,4 +37,5 @@ public class CartTest {
     void shouldReturnOneFortyPointFiveAsTotalCost() {
         assertThat(cart.getTotalCost(), is(equalTo(totalCost)));
     }
+
 }
