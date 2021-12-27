@@ -9,11 +9,12 @@ public class CartService {
     private ItemRepository itemRepository;
 
     //TODO add exception
-    void addItem(Item item) {
+    boolean addItem(Item item) {
         if(itemRepository.existsByName(item.getName())){
-            return;
+            return false;
         }
         itemRepository.save(item);
+        return true;
     }
 
     void deleteItem(int itemId) {

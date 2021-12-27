@@ -62,13 +62,29 @@ public class CartControllerTest {
 
     @Test
     void shouldAddItemToCart() throws Exception {
+        when(cartService.addItem(itemPencil)).thenReturn(true);
 
         mockMvc.perform(post("/cart/items")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemPencil)))
-                .andExpect(status().isCreated());
+                        .andExpect(status().isCreated());
 
         verify(cartService).addItem(itemPencil);
+    }
+
+    @Test
+    void shouldNotAddDuplicateItemToCart() throws Exception {
+
+        mockMvc.perform(post("/cart/items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(itemPencil)));
+
+        when(cartService.addItem(itemPencil)).thenReturn(false);
+
+        mockMvc.perform(post("/cart/items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(itemPencil)))
+                        .andExpect(status().isBadRequest());
     }
 
     @Test

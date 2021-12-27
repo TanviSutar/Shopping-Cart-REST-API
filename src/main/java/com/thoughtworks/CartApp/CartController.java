@@ -31,7 +31,9 @@ public class CartController {
             return new ResponseEntity<>("Invalid Item: Item name should not contain special characters(Eg: ?, @, etc).", BAD_REQUEST);
         }
 
-        cartService.addItem(item);
+        if(!cartService.addItem(item)){
+            return new ResponseEntity<>(item.getName() + " already present in the cart.", BAD_REQUEST);
+        }
         return new ResponseEntity<>(item.getName() + " added to the cart.", CREATED);
     }
 
