@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.CartApp.custom_exceptions.ItemAlreadyExistsException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -137,5 +136,22 @@ public class CartControllerTest {
                 .andExpect(status().isOk());
 
         verify(cartService).getItemById(itemRasMalai.getId());
+    }
+
+    //TODO review
+    @Test
+    void shouldReturnCartDTOOfItemsThatMatchTheGivenPatternString() throws Exception {
+        String searchString = "pen";
+        CartDTO cartDTO = new CartDTO(new ArrayList<>(){
+            {
+                add(itemPencil);
+            }
+        });
+        when(cartService.searchByStringPattern(searchString)).thenReturn(cartDTO);
+
+        mockMvc.perform(get("/cart/items?name={name}", searchString))
+                .andExpect(status().isOk());
+
+        verify(cartService).searchByStringPattern(searchString);
     }
 }

@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class CartServiceTest {
     @Mock
-    private ItemRepository cartRepository;
+    private ItemRepository itemRepository;
 
     @InjectMocks
     private CartService cartService;
@@ -49,44 +49,44 @@ public class CartServiceTest {
     void shouldCallAddMethodOfCartRepositoryWhenValidItemIsBeingAdded() throws ItemAlreadyExistsException {
         cartService.addItem(itemDTOSharpener);
 
-        verify(cartRepository, times(1)).save(any());
+        verify(itemRepository, times(1)).save(any());
     }
 
     @Test
     void shouldThrowItemAlreadyExistsExceptionWhenDuplicateItemIsBeingAdded() {
-        when(cartRepository.existsByName(itemDTOSharpener.getName())).thenReturn(true);
+        when(itemRepository.existsByName(itemDTOSharpener.getName())).thenReturn(true);
 
         assertThrows(ItemAlreadyExistsException.class, ()-> {
             cartService.addItem(itemDTOSharpener);
         });
 
-        verify(cartRepository, never()).save(any());
+        verify(itemRepository, never()).save(any());
     }
 
     @Test
     void shouldCallRemoveMethodOfCartRepositoryWhenItemIsBeingDeleted() {
-        when(cartRepository.existsById(any())).thenReturn(true);
+        when(itemRepository.existsById(any())).thenReturn(true);
 
         cartService.deleteItem(itemPencil.getId());
 
-        verify(cartRepository, times(1)).deleteById(any());
+        verify(itemRepository, times(1)).deleteById(any());
     }
 
     @Test
     void shouldThrowItemNotFoundExceptionWhenTheItemIsNotAvailableInTheCart() {
         Item itemScale = new Item("Scale", 15);
-        when(cartRepository.existsById(any())).thenReturn(false);
+        when(itemRepository.existsById(any())).thenReturn(false);
 
         assertThrows(ItemNotFoundException.class, () -> {
             cartService.deleteItem(itemScale.getId());
         });
 
-        verify(cartRepository, never()).deleteById(itemScale.getId());
+        verify(itemRepository, never()).deleteById(itemScale.getId());
     }
 
     @Test
     void shouldReturnAllCartItemsWhenAllItemsNeedToBeViewed() {
-        when(cartRepository.findAll()).thenReturn(itemList);
+        when(itemRepository.findAll()).thenReturn(itemList);
 
         Iterable<Item> actualItemList = cartService.viewItems().getItems();
 
@@ -95,27 +95,45 @@ public class CartServiceTest {
 
     @Test
     void shouldReturnTwentyFiveAsTotalCostWhenCartHasPencilWorthTwentyRupeesAndErasureWorthFiveRupees() {
-        when(cartRepository.findAll()).thenReturn(itemList);
+        when(itemRepository.findAll()).thenReturn(itemList);
 
         assertThat(cartService.viewItems().getTotalCost(), is(equalTo(25.0)));
     }
 
     @Test
     void shouldReturnItemGivenTheItemId() {
-        when(cartRepository.existsById(itemPencil.getId())).thenReturn(true);
-        when(cartRepository.findById(itemPencil.getId())).thenReturn(Optional.ofNullable(itemPencil));
+        when(itemRepository.existsById(itemPencil.getId())).thenReturn(true);
+        when(itemRepository.findById(itemPencil.getId())).thenReturn(Optional.ofNullable(itemPencil));
 
         assertThat(cartService.getItemById(itemPencil.getId()), is(equalTo(itemPencil)));
     }
 
     @Test
     void shouldThrowItemNotFoundExceptionWhenNoItemByGivenIdIsFound() {
-        when(cartRepository.existsById(itemPencil.getId())).thenReturn(false);
+        when(itemRepository.existsById(itemPencil.getId())).thenReturn(false);
 
         assertThrows(ItemNotFoundException.class, () -> {
             cartService.getItemById(itemPencil.getId());
         });
 
-        verify(cartRepository, never()).findById(itemPencil.getId());
+        verify(itemRepository, never()).findById(itemPencil.getId());
+    }
+
+    //TODO review
+    @Test
+    void shouldReturnItemListHavingAllItemsWithNameMatchingTheGivenSearchString() {
+        ArrayList<Item> itemList = new ArrayList<>(){
+            {
+                add(itemPencil);
+            }
+        };
+        String searchString = "pen";
+
+        when(itemRepository.findByNameLike(any())).thenReturn(itemList);
+
+        CartDTO cartDTO = cartService.searchByStringPattern(searchString);
+
+        verify(itemRepository).findByNameLike(any());
+
     }
 }

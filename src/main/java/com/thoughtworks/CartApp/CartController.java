@@ -19,18 +19,16 @@ public class CartController {
     @GetMapping("cart/items")
     public CartDTO viewAllItems(@RequestParam(defaultValue = "") String name, @RequestParam(defaultValue = "") String id) {
         if(name.trim().length() > 0 ){
-            ArrayList<Item> arr = new ArrayList<>(){
-                {
-                    add(new Item("Pencil", 23));
-                    add(new Item("Eraser", 10));
-                }
-            };
-            return new CartDTO(arr);
+            return searchByStringPattern(name);
         }
         if(id.trim().length() > 0 ){
             return getItemById(Integer.parseInt(id));
         }
         return cartService.viewItems();
+    }
+
+    public CartDTO searchByStringPattern(String name){
+        return cartService.searchByStringPattern(name);
     }
 
     public CartDTO getItemById(int id){

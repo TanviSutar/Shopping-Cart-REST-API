@@ -5,7 +5,7 @@ import com.thoughtworks.CartApp.custom_exceptions.ItemNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class CartService {
@@ -37,5 +37,13 @@ public class CartService {
             throw new ItemNotFoundException();
         }
         return itemRepository.findById(id).get();
+    }
+
+    public CartDTO searchByStringPattern(String searchString) {
+        List<Item> itemList = itemRepository.findByNameLike("%"+searchString+"%");
+        if(itemList.size() == 0){
+            throw new ItemNotFoundException();
+        }
+        return new CartDTO(itemList);
     }
 }
