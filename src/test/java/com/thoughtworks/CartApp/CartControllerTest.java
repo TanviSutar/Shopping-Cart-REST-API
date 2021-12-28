@@ -91,7 +91,7 @@ public class CartControllerTest {
         mockMvc.perform(post("/cart/items")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemDTOSharpener)))
-                        .andExpect(status().isBadRequest());
+                        .andExpect(status().isNotFound());
 
         verify(cartService).addItem(any());
     }
@@ -133,7 +133,7 @@ public class CartControllerTest {
         Item itemRasMalai = new Item("RasMalai", 1000);
         when(cartService.getItemById(itemRasMalai.getId())).thenReturn(itemRasMalai);
 
-        mockMvc.perform(get("/cart/items/{id}", itemRasMalai.getId()))
+        mockMvc.perform(get("/cart/items?id={id}", itemRasMalai.getId()))
                 .andExpect(status().isOk());
 
         verify(cartService).getItemById(itemRasMalai.getId());

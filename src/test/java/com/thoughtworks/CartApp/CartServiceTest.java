@@ -1,6 +1,7 @@
 package com.thoughtworks.CartApp;
 
 import com.thoughtworks.CartApp.custom_exceptions.ItemAlreadyExistsException;
+import com.thoughtworks.CartApp.custom_exceptions.ItemNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,7 +53,7 @@ public class CartServiceTest {
     }
 
     @Test
-    void shouldNotCallAddMethodOfCartRepositoryWhenDuplicateItemIsBeingAdded() {
+    void shouldThrowItemAlreadyExistsExceptionWhenDuplicateItemIsBeingAdded() {
         when(cartRepository.existsByName(itemDTOSharpener.getName())).thenReturn(true);
 
         assertThrows(ItemAlreadyExistsException.class, ()-> {
@@ -72,11 +73,13 @@ public class CartServiceTest {
     }
 
     @Test
-    void shouldNotCallRemoveMethodOfCartRepositoryWhenTheItemIsNotAvailableInTheCart() {
+    void shouldThrowItemNotFoundExceptionWhenTheItemIsNotAvailableInTheCart() {
         Item itemScale = new Item("Scale", 15);
         when(cartRepository.existsById(any())).thenReturn(false);
 
-        cartService.deleteItem(itemScale.getId());
+        assertThrows(ItemNotFoundException.class, () -> {
+            cartService.deleteItem(itemScale.getId());
+        });
 
         verify(cartRepository, never()).deleteById(itemScale.getId());
     }
@@ -99,8 +102,20 @@ public class CartServiceTest {
 
     @Test
     void shouldReturnItemGivenTheItemId() {
+        when(cartRepository.existsById(itemPencil.getId())).thenReturn(true);
         when(cartRepository.findById(itemPencil.getId())).thenReturn(Optional.ofNullable(itemPencil));
 
         assertThat(cartService.getItemById(itemPencil.getId()), is(equalTo(itemPencil)));
+    }
+
+    @Test
+    void shouldThrowItemNotFoundExceptionWhenNoItemByGivenIdIsFound() {
+        when(cartRepository.existsById(itemPencil.getId())).thenReturn(false);
+
+        assertThrows(ItemNotFoundException.class, () -> {
+            cartService.getItemById(itemPencil.getId());
+        });
+
+        verify(cartRepository, never()).findById(itemPencil.getId());
     }
 }
