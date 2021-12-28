@@ -1,19 +1,19 @@
 package com.thoughtworks.CartApp;
 
+import com.thoughtworks.CartApp.custom_exceptions.ItemAlreadyExistsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,35 +26,38 @@ public class CartServiceTest {
 
     private Item itemPencil;
     private Item itemEraser;
+    private ItemDTO itemDTOSharpener;
     private ArrayList<Item> itemList;
-    private Cart cart;
+    private CartDTO cart;
 
     @BeforeEach
     void setUp() {
         itemPencil = new Item("Pencil", 20);
         itemEraser = new Item("Erasure", 5);
+        itemDTOSharpener = new ItemDTO("Sharpener", 30);
         itemList = new ArrayList<>() {
             {
                 add(itemPencil);
                 add(itemEraser);
             }
         };
-        cart = new Cart(itemList);
+        cart = new CartDTO(itemList);
     }
 
     @Test
-    void shouldCallAddMethodOfCartRepositoryWhenValidItemIsBeingAdded() {
-        Item itemScale = new Item("Scale", 15);
-        cartService.addItem(itemScale);
+    void shouldCallAddMethodOfCartRepositoryWhenValidItemIsBeingAdded() throws ItemAlreadyExistsException {
+        cartService.addItem(itemDTOSharpener);
 
         verify(cartRepository, times(1)).save(any());
     }
 
     @Test
     void shouldNotCallAddMethodOfCartRepositoryWhenDuplicateItemIsBeingAdded() {
-        when(cartRepository.existsByName(any())).thenReturn(true);
+        when(cartRepository.existsByName(itemDTOSharpener.getName())).thenReturn(true);
 
-        cartService.addItem(itemPencil);
+        assertThrows(ItemAlreadyExistsException.class, ()-> {
+            cartService.addItem(itemDTOSharpener);
+        });
 
         verify(cartRepository, never()).save(any());
     }

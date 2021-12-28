@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+//@DirtiesContext(classMode == DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Disabled
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -27,13 +29,13 @@ public class IntegrationTest {
     private MockMvc mockMvc;
 
     private Item itemPencil, itemEraser;
-    private Cart cart;
+    private CartDTO cart;
 
     @BeforeEach
     void setUp() throws Exception {
         itemPencil = new Item("pencil", 20.0);
         itemEraser = new Item("eraser", 5.0);
-        cart = new Cart(new ArrayList<>(){
+        cart = new CartDTO(new ArrayList<>(){
             {
                 add(itemPencil);
                 add(itemEraser);
@@ -54,7 +56,7 @@ public class IntegrationTest {
     @Disabled
     void shouldReturnEmptyItemListBeforeAnyItemIsAddedToTheCart() throws Exception {
         mockMvc.perform(get("/cart/items"))
-                        .andExpect(content().json(new ObjectMapper().writeValueAsString(new Cart(new ArrayList<Item>()))))
+                        .andExpect(content().json(new ObjectMapper().writeValueAsString(new CartDTO(new ArrayList<Item>()))))
                         .andExpect(status().isOk());
     }
 

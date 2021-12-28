@@ -1,7 +1,10 @@
 package com.thoughtworks.CartApp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.CartApp.custom_exceptions.ItemAlreadyExistsException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -19,7 +21,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
-import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -37,18 +38,26 @@ public class CartControllerTest {
 
     private Item itemPencil;
     private Item itemEraser;
-    private Cart cart;
+    private CartDTO cart;
+    private ItemDTO itemDTOSharpener;
 
     @BeforeEach
     void setUp() {
         itemPencil = new Item("Pencil", 20);
         itemEraser = new Item("Eraser", 5);
-        cart = new Cart(new ArrayList<>() {
+        cart = new CartDTO(new ArrayList<>() {
             {
                 add(itemPencil);
                 add(itemEraser);
             }
         });
+        itemDTOSharpener = new ItemDTO("Sharpener", 20);
+    }
+
+    @AfterEach
+    void tearDown(){
+        cartService.deleteItem(itemPencil.getId());
+        cartService.deleteItem(itemEraser.getId());
     }
 
     @Test
@@ -64,29 +73,27 @@ public class CartControllerTest {
 
     @Test
     void shouldAddItemToCart() throws Exception {
-        when(cartService.addItem(itemPencil)).thenReturn(true);
+        when(cartService.addItem(itemDTOSharpener)).thenReturn(1);
 
         mockMvc.perform(post("/cart/items")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(itemPencil)))
+                        .content(new ObjectMapper().writeValueAsString(itemDTOSharpener)))
                         .andExpect(status().isCreated());
 
-        verify(cartService).addItem(itemPencil);
+        verify(cartService).addItem(any());
     }
 
+    //TODO review
     @Test
     void shouldNotAddDuplicateItemToCart() throws Exception {
+        when(cartService.addItem(any())).thenThrow(new ItemAlreadyExistsException());
 
         mockMvc.perform(post("/cart/items")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(itemPencil)));
-
-        when(cartService.addItem(itemPencil)).thenReturn(false);
-
-        mockMvc.perform(post("/cart/items")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(itemPencil)))
+                        .content(new ObjectMapper().writeValueAsString(itemDTOSharpener)))
                         .andExpect(status().isBadRequest());
+
+        verify(cartService).addItem(any());
     }
 
     @Test
@@ -111,7 +118,7 @@ public class CartControllerTest {
 
     @Test
     void shouldReturnBadRequestStatusCodeWhenItemNameIsEmptyString() throws Exception {
-        Item itemWithNoName = new Item(" ", 60.0);
+        ItemDTO itemWithNoName = new ItemDTO(" ", 60.0);
 
         mockMvc.perform(post("/cart/items")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -119,18 +126,6 @@ public class CartControllerTest {
                         .andExpect(status().isBadRequest());
 
         verify(cartService, never()).addItem(itemWithNoName);
-    }
-
-    @Test
-    void shouldReturnBadRequestStatusCodeWhenItemNameHasAtLeastOneSpecialCharacter() throws Exception {
-        Item itemWithSpecialCharacter = new Item("Sug@r", 60.0);
-
-        mockMvc.perform(post("/cart/items")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(itemWithSpecialCharacter)))
-                        .andExpect(status().isBadRequest());
-
-        verify(cartService, never()).addItem(itemWithSpecialCharacter);
     }
 
     @Test

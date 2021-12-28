@@ -2,7 +2,6 @@ package com.thoughtworks.CartApp;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 
@@ -12,7 +11,7 @@ import static org.hamcrest.Matchers.is;
 
 public class CartTest {
 
-    private Cart cart;
+    private CartDTO cart;
     private ArrayList<Item> items;
     private double totalCost;
 
@@ -25,7 +24,7 @@ public class CartTest {
             }
         };
         totalCost = 140.50;
-        cart = new Cart(items);
+        cart = new CartDTO(items);
     }
 
     @Test
@@ -37,5 +36,4 @@ public class CartTest {
     void shouldReturnOneFortyPointFiveAsTotalCost() {
         assertThat(cart.getTotalCost(), is(equalTo(totalCost)));
     }
-
 }

@@ -1,5 +1,6 @@
 package com.thoughtworks.CartApp;
 
+import com.thoughtworks.CartApp.custom_exceptions.ItemAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,13 +11,13 @@ public class CartService {
     @Autowired
     private ItemRepository itemRepository;
 
-    //TODO add exception
-    boolean addItem(Item item) {
-        if(itemRepository.existsByName(item.getName())){
-            return false;
+    int addItem(ItemDTO itemDTO) throws ItemAlreadyExistsException {
+        if(itemRepository.existsByName(itemDTO.getName())){
+            throw new ItemAlreadyExistsException();
         }
+        Item item = new Item(itemDTO.getName(), itemDTO.getCost());
         itemRepository.save(item);
-        return true;
+        return item.getId();
     }
 
     void deleteItem(int itemId) {
@@ -26,8 +27,8 @@ public class CartService {
         itemRepository.deleteById(itemId);
     }
 
-    Cart viewItems() {
-        return new Cart(itemRepository.findAll());
+    CartDTO viewItems() {
+        return new CartDTO(itemRepository.findAll());
     }
 
     public Item getItemById(int id) {
