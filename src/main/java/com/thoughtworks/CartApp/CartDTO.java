@@ -2,7 +2,7 @@ package com.thoughtworks.CartApp;
 
 import java.util.Objects;
 
-public class CartDTO {
+public class CartDTO implements DTO{
     private final Iterable<Item> items;
     private double totalCost;
 

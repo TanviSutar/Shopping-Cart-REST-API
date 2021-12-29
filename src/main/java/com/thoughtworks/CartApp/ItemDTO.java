@@ -1,8 +1,8 @@
 package com.thoughtworks.CartApp;
 
-public class ItemDTO {
-    private String name;
-    private double cost;
+public class ItemDTO implements DTO{
+    private final String name;
+    private final double cost;
 
     public ItemDTO(String name, double cost) {
         this.name = name;

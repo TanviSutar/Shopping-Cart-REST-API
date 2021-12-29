@@ -1,6 +1,6 @@
 package com.thoughtworks.CartApp;
 
-public class ErrorDTO {
+public class ErrorDTO implements DTO{
     public final ErrorCode errorCode;
     public final String details;
 
