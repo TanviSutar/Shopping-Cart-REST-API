@@ -94,7 +94,7 @@ public class CartControllerTest {
     }
 
     @Test
-    void shouldRemoveItemFromCart() throws Exception {
+    void shouldRemoveItemFromCartWhenItemIdIsGiven() throws Exception {
         mockMvc.perform(delete("/cart/items/{id}", itemPencil.getId()))
                         .andExpect(status().isOk());
 
@@ -138,7 +138,7 @@ public class CartControllerTest {
 
     //TODO review
     @Test
-    void shouldReturnCartDTOOfItemsThatMatchTheGivenPatternString() throws Exception {
+    void shouldReturnCartDTOOfItemsThatMatchesTheGivenPatternString() throws Exception {
         String searchString = "pen";
         CartDTO cartDTO = new CartDTO(new ArrayList<>(){
             {

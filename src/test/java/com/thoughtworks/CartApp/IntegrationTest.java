@@ -15,6 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -31,6 +35,9 @@ public class IntegrationTest {
     @Autowired
     private CartService cartService;
 
+    @Autowired
+    private ItemRepository itemRepository;
+
     @Test
     void shouldReturnEmptyItemListBeforeAnyItemIsAddedToTheCart() throws Exception {
         mockMvc.perform(get("/cart/items"))
@@ -40,34 +47,46 @@ public class IntegrationTest {
 
     @Test
     void shouldReturnListOfAllItemsInTheCart() throws Exception {
-        ItemDTO itemDTO = new ItemDTO("fan", 1000);
-
-        mockMvc.perform(post("/cart/items")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(itemDTO)));
+        Item itemBook = new Item("Book", 400);
+        Item itemPen = new Item("Pen", 30);
+        CartDTO cartDTO = new CartDTO(new ArrayList<>(){
+            {
+                add(itemBook);
+                add(itemPen);
+            }
+        });
+        itemRepository.save(itemBook);
+        itemRepository.save(itemPen);
 
         mockMvc.perform(get("/cart/items")
                         .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(content().json(new ObjectMapper().writeValueAsString(cartDTO)))
                         .andExpect(status().isOk());
+
+        itemRepository.deleteById(itemBook.getId());
+        itemRepository.deleteById(itemPen.getId());
     }
 
     @Test
     void shouldAddItemToTheCart() throws Exception {
-        Item itemLettuce = new Item("lettuce", 40.0);
+        ItemDTO itemLettuce = new ItemDTO("lettuce", 40.0);
 
         mockMvc.perform(post("/cart/items", itemLettuce.getName())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(itemLettuce)))
                         .andExpect(status().isCreated());
 
+        assertThat(itemRepository.existsByName(itemLettuce.getName()), is(equalTo(Boolean.TRUE)));
     }
 
     @Test
     void shouldDeleteItemFromTheCart() throws Exception {
-        ItemDTO itemPencil = new ItemDTO("Pencil", 20);
-        int id = cartService.addItem(itemPencil);
-        mockMvc.perform(delete("/cart/items/{id}", id)
+        Item itemPencil = new Item("pencil", 20);
+        itemRepository.save(itemPencil);
+        mockMvc.perform(delete("/cart/items/{id}", itemPencil.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk());
+
+        assertThat(itemRepository.existsById(itemPencil.getId()), is(equalTo(Boolean.FALSE)));
     }
 }
