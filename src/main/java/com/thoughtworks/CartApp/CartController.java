@@ -1,5 +1,7 @@
 package com.thoughtworks.CartApp;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,9 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
+    private static final Logger LOG = LoggerFactory.getLogger(CartController.class);
+
+    //TODO use regular expression to validate name and id strings
     @GetMapping("cart/items")
     public CartDTO viewAllItems(@RequestParam(defaultValue = "") String name, @RequestParam(defaultValue = "") String id) {
         if(name.trim().length() > 0 ){
@@ -21,6 +26,7 @@ public class CartController {
         if(id.trim().length() > 0 ){
             return getItemById(Integer.parseInt(id));
         }
+        LOG.info("Item has been added successfully.");
         return cartService.viewItems();
     }
 

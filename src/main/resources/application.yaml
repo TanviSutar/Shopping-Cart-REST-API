@@ -11,5 +11,9 @@ spring:
     password: tanvi
     driver-class-name: com.mysql.jdbc.Driver
 
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
 server:
   port: 8081
