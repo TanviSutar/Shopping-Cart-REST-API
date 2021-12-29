@@ -10,4 +10,5 @@ import java.util.List;
 public interface ItemRepository extends CrudRepository<Item, Integer> {
     boolean existsByName(String name);
     List<Item> findByNameLike(String searchString);
+    void deleteByName(String name);
 }

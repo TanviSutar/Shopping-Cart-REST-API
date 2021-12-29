@@ -16,12 +16,12 @@ public class CartService {
         if(itemRepository.existsByName(itemDTO.getName())){
             throw new ItemAlreadyExistsException();
         }
-        Item item = new Item(itemDTO.getName(), itemDTO.getCost());
+        Item item = new Item(itemDTO.getName().toLowerCase(), itemDTO.getCost());
         itemRepository.save(item);
         return item.getId();
     }
 
-    void deleteItem(int itemId) {
+    void deleteItemById(int itemId) {
         if (!itemRepository.existsById(itemId)) {
            throw new ItemNotFoundException();
         }
@@ -45,5 +45,12 @@ public class CartService {
             throw new ItemNotFoundException();
         }
         return new CartDTO(itemList);
+    }
+
+    public void deleteItemByName(String name) {
+        if(itemRepository.findByNameLike("%"+name+"%").size() == 0){
+            throw new ItemNotFoundException();
+        }
+        itemRepository.deleteByName(name);
     }
 }

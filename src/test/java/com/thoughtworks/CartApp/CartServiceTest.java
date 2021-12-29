@@ -67,7 +67,7 @@ public class CartServiceTest {
     void shouldCallRemoveMethodOfCartRepositoryWhenItemIsBeingDeleted() {
         when(itemRepository.existsById(any())).thenReturn(true);
 
-        cartService.deleteItem(itemPencil.getId());
+        cartService.deleteItemById(itemPencil.getId());
 
         verify(itemRepository, times(1)).deleteById(any());
     }
@@ -78,7 +78,7 @@ public class CartServiceTest {
         when(itemRepository.existsById(any())).thenReturn(false);
 
         assertThrows(ItemNotFoundException.class, () -> {
-            cartService.deleteItem(itemScale.getId());
+            cartService.deleteItemById(itemScale.getId());
         });
 
         verify(itemRepository, never()).deleteById(itemScale.getId());
@@ -135,5 +135,17 @@ public class CartServiceTest {
 
         verify(itemRepository).findByNameLike(any());
 
+    }
+
+    @Test
+    void shouldDeleteItemGivenTheNameOfTheItem() {
+        String name = "pencil";
+        when(itemRepository.findByNameLike(any())).thenReturn(new ArrayList<>(){
+            {
+                add(itemPencil);
+            }
+        });
+        cartService.deleteItemByName(name);
+        verify(itemRepository).deleteByName(name);
     }
 }

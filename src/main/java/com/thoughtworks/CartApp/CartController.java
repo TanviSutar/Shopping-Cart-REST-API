@@ -1,13 +1,10 @@
 package com.thoughtworks.CartApp;
 
-import com.thoughtworks.CartApp.custom_exceptions.ItemAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Optional;
-import java.util.regex.Pattern;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -51,7 +48,7 @@ public class CartController {
 
     @DeleteMapping("/cart/items/{id}")
     public ResponseEntity<String> deleteItem(@PathVariable int id) {
-        cartService.deleteItem(id);
+        cartService.deleteItemById(id);
         return new ResponseEntity<>("Item deleted from the cart.", OK);
     }
 }

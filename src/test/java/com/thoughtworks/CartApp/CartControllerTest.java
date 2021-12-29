@@ -55,8 +55,8 @@ public class CartControllerTest {
 
     @AfterEach
     void tearDown(){
-        cartService.deleteItem(itemPencil.getId());
-        cartService.deleteItem(itemEraser.getId());
+        cartService.deleteItemById(itemPencil.getId());
+        cartService.deleteItemById(itemEraser.getId());
     }
 
     @Test
@@ -100,7 +100,7 @@ public class CartControllerTest {
         mockMvc.perform(delete("/cart/items/{id}", itemPencil.getId()))
                         .andExpect(status().isOk());
 
-        verify(cartService).deleteItem(itemPencil.getId());
+        verify(cartService).deleteItemById(itemPencil.getId());
     }
 
     @Test
