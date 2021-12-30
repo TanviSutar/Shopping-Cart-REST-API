@@ -21,9 +21,11 @@ public class CartController {
         if(name.trim().length() > 0){
             return searchByStringPattern(name);
         }
+
         if(id.trim().length() > 0){
             return getItemById(Integer.parseInt(id));
         }
+
         return cartService.getItemList();
     }
 
@@ -40,21 +42,27 @@ public class CartController {
         });
     }
 
-    @RequestMapping(value = "/cart/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/cart/items", method = RequestMethod.POST)
     public ResponseEntity<DTO> addItem(@RequestBody ItemDTO item) {
-        if (item.getName().equals("") || item.getName().trim().length() == 0) {
+
+        if (item.getName().trim().length() == 0) {
             LOG.info("Attempt to enter invalidly named item.");
-            return new ResponseEntity<>(new ErrorDTO(ErrorCode.INVALID_ITEM_NAME, "Item name is invalid."), BAD_REQUEST);
+            return new ResponseEntity<>(new ErrorDTO(ErrorCode.INVALID_ITEM_NAME, "Item name should be non-empty string."), BAD_REQUEST);
         }
+
         int id = cartService.addItem(item);
+
         LOG.info(item.getName()+" has been added successfully.");
+
         return new ResponseEntity<>(new ResponseDTO(id, item.getName() + " added to the cart."), CREATED);
     }
 
-    @RequestMapping(value = "/cart/items/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/cart/items/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<DTO> deleteItem(@PathVariable int id) {
         cartService.deleteItemById(id);
+
         LOG.info("Item with id="+id+" has been deleted successfully.");
+
         return new ResponseEntity<>(new ResponseDTO(id, "Item deleted from the cart."), OK);
     }
 }

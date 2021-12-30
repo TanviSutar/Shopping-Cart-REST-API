@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.CartApp.custom_exceptions.ItemAlreadyExistsException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -34,122 +34,130 @@ public class CartControllerTest {
     private CartController cartController;
 
     private Item itemPencil;
-    private Item itemEraser;
-    private CartDTO cart;
-    private ItemDTO itemDTOSharpener;
+    private CartDTO cartDTO;
+    private ItemDTO itemPencilDTO;
 
     @BeforeEach
     void setUp() {
         itemPencil = new Item("Pencil", 20);
-        itemEraser = new Item("Eraser", 5);
-        cart = new CartDTO(new ArrayList<>() {
+        cartDTO = new CartDTO(new ArrayList<>() {
             {
                 add(itemPencil);
-                add(itemEraser);
             }
         });
-        itemDTOSharpener = new ItemDTO("Sharpener", 20);
+        itemPencilDTO = new ItemDTO("Pencil", 20);
     }
 
     @AfterEach
     void tearDown(){
         cartService.deleteItemById(itemPencil.getId());
-        cartService.deleteItemById(itemEraser.getId());
     }
 
     @Test
-    void shouldReturnListOfItems() throws Exception {
-        when(cartService.getItemList()).thenReturn(cart);
+    void shouldReturnEmptyCartWhenNoItemHasBeenAddedToTheCart() throws Exception {
+        CartDTO emptyCartDTO = new CartDTO(new ArrayList<Item>());
+        when(cartService.getItemList()).thenReturn(emptyCartDTO);
 
         mockMvc.perform(get("/cart/items"))
-                .andExpect(content().json(new ObjectMapper().writeValueAsString(cart)))
+                .andExpect(content().json(new ObjectMapper().writeValueAsString(emptyCartDTO)))
                 .andExpect(status().isOk());
 
-        verify(cartService).getItemList();
+        verify(cartService, times(1)).getItemList();
+    }
+
+    @Test
+    void shouldReturnNonEmptyCartOfItems() throws Exception {
+        when(cartService.getItemList()).thenReturn(cartDTO);
+
+        mockMvc.perform(get("/cart/items"))
+                .andExpect(content().json(new ObjectMapper().writeValueAsString(cartDTO)))
+                .andExpect(status().isOk());
+
+        verify(cartService, times(1)).getItemList();
+    }
+
+    @Test
+    void shouldReturnCartDTOOfItemsThatMatchesTheGivenPatternString() throws Exception {
+        String searchString = "pen";
+        when(cartService.getItemListByNameBasedPattern(searchString)).thenReturn(cartDTO);
+
+        mockMvc.perform(get("/cart/items?name={name}", searchString))
+                .andExpect(content().json(new ObjectMapper().writeValueAsString(cartDTO)))
+                .andExpect(status().isOk());
+
+        verify(cartService).getItemListByNameBasedPattern(searchString);
+    }
+
+    @Test
+    void shouldReturnItemGivenTheItemId() throws Exception {
+        when(cartService.getItemById(itemPencil.getId())).thenReturn(itemPencil);
+
+        mockMvc.perform(get("/cart/items?id={id}", itemPencil.getId()))
+                .andExpect(content().json(new ObjectMapper().writeValueAsString(cartDTO)))
+                .andExpect(status().isOk());
+
+        verify(cartService).getItemById(itemPencil.getId());
+    }
+
+    @Test
+    void shouldReturnAllItemsWhenTheNameAndIdParametersAreEmptyStrings() throws Exception {
+        when(cartService.getItemList()).thenReturn(cartDTO);
+
+        mockMvc.perform(get("/cart/items?name={name}&id={id}", "", ""))
+                .andExpect(content().json(new ObjectMapper().writeValueAsString(cartDTO)))
+                .andExpect(status().isOk());
+
+        verify(cartService, times(1)).getItemList();
     }
 
     @Test
     void shouldAddItemToCart() throws Exception {
-        when(cartService.addItem(itemDTOSharpener)).thenReturn(1);
+        ResponseDTO responseDTO = new ResponseDTO(itemPencil.getId(), itemPencil.getName() + " added to the cart.");
+        when(cartService.addItem(itemPencilDTO)).thenReturn(itemPencil.getId());
 
         mockMvc.perform(post("/cart/items")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(itemDTOSharpener)))
+                        .content(new ObjectMapper().writeValueAsString(itemPencilDTO)))
+                        .andExpect(content().json(new ObjectMapper().writeValueAsString(responseDTO)))
                         .andExpect(status().isCreated());
 
         verify(cartService).addItem(any());
     }
 
-    //TODO review
     @Test
-    void shouldNotAddDuplicateItemToCart() throws Exception {
-        when(cartService.addItem(any())).thenThrow(new ItemAlreadyExistsException());
+    void shouldNotAddItemToCartWhenItemNameIsEmptyString() throws Exception {
+        ErrorDTO errorDTO = new ErrorDTO(ErrorCode.INVALID_ITEM_NAME, "Item name should be non-empty string.");
 
         mockMvc.perform(post("/cart/items")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(itemDTOSharpener)))
-                        .andExpect(status().isNotFound());
+                        .content(new ObjectMapper().writeValueAsString(new ItemDTO("", 0))))
+                        .andExpect(content().json(new ObjectMapper().writeValueAsString(errorDTO)))
+                        .andExpect(status().isBadRequest());
 
-        verify(cartService).addItem(any());
+        verify(cartService, never()).addItem(any());
+    }
+
+    @Disabled
+    @Test
+    void shouldNotAddDuplicateItemToCart() throws Exception {
+        ErrorDTO errorDTO = new ErrorDTO(ErrorCode.ITEM_ALREADY_EXISTS, "A similar item already exists in the cart.");
+        when(cartService.addItem(itemPencilDTO)).thenThrow(new ItemAlreadyExistsException());
+
+        mockMvc.perform(post("/cart/items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(itemPencilDTO)))
+                        .andExpect(content().json(new ObjectMapper().writeValueAsString(errorDTO)))
+                        .andExpect(status().isConflict());
+
+        verify(cartService).addItem(itemPencilDTO);
     }
 
     @Test
     void shouldRemoveItemFromCartWhenItemIdIsGiven() throws Exception {
         mockMvc.perform(delete("/cart/items/{id}", itemPencil.getId()))
+                        .andExpect(content().json(new ObjectMapper().writeValueAsString(new ResponseDTO(itemPencil.getId(), "Item deleted from the cart."))))
                         .andExpect(status().isOk());
 
         verify(cartService).deleteItemById(itemPencil.getId());
-    }
-
-    @Test
-    void shouldReturnTwentyFiveAsTotalCostWhenPencilWorthTwentyRupeesAndEraserWorthFiveRupeesIsAddedToTheCart() throws Exception {
-        when(cartService.getItemList()).thenReturn(cart);
-
-        mockMvc.perform(get("/cart/items"))
-                .andExpect(content().json(new ObjectMapper().writeValueAsString(cart)))
-                .andExpect(status().isOk());
-
-        verify(cartService).getItemList();
-        assertThat(cart.getTotalCost(), is(equalTo(25.0)));
-    }
-
-    @Test
-    void shouldReturnBadRequestStatusCodeWhenItemNameIsEmptyString() throws Exception {
-        ItemDTO itemWithNoName = new ItemDTO(" ", 60.0);
-
-        mockMvc.perform(post("/cart/items")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(itemWithNoName)))
-                        .andExpect(status().isBadRequest());
-
-        verify(cartService, never()).addItem(itemWithNoName);
-    }
-
-    @Test
-    void shouldReturnItemGivenTheItemId() throws Exception {
-        Item itemRasMalai = new Item("RasMalai", 1000);
-        when(cartService.getItemById(itemRasMalai.getId())).thenReturn(itemRasMalai);
-
-        mockMvc.perform(get("/cart/items?id={id}", itemRasMalai.getId()))
-                .andExpect(status().isOk());
-
-        verify(cartService).getItemById(itemRasMalai.getId());
-    }
-
-    //TODO review
-    @Test
-    void shouldReturnCartDTOOfItemsThatMatchesTheGivenPatternString() throws Exception {
-        String searchString = "pen";
-        CartDTO cartDTO = new CartDTO(new ArrayList<>(){
-            {
-                add(itemPencil);
-            }
-        });
-        when(cartService.getItemListByNameBasedPattern(searchString)).thenReturn(cartDTO);
-
-        mockMvc.perform(get("/cart/items?name={name}", searchString))
-                .andExpect(status().isOk());
-
-        verify(cartService).getItemListByNameBasedPattern(searchString);
     }
 }

@@ -2,7 +2,7 @@ package com.thoughtworks.CartApp;
 
 import com.thoughtworks.CartApp.custom_exceptions.ItemAlreadyExistsException;
 import com.thoughtworks.CartApp.custom_exceptions.ItemNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,13 +25,13 @@ public class CartServiceTest {
     @InjectMocks
     private CartService cartService;
 
-    private Item itemPencil;
-    private ItemDTO itemDTOSharpener;
-    private ArrayList<Item> itemList;
-    private CartDTO cartDTO;
+    private static Item itemPencil;
+    private static ItemDTO itemDTOSharpener;
+    private static ArrayList<Item> itemList;
+    private static CartDTO cartDTO;
 
-    @BeforeEach
-    void setUp() {
+    @BeforeAll
+    static void setUp() {
         itemPencil = new Item("Pencil", 20);
         itemDTOSharpener = new ItemDTO("Sharpener", 30);
         itemList = new ArrayList<>() {

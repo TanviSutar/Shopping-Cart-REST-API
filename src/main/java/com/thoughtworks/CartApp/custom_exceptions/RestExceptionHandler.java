@@ -12,7 +12,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(ItemAlreadyExistsException.class)
     public ResponseEntity<ErrorDTO> handleItemAlreadyExists(ItemAlreadyExistsException exception){
-        return new ResponseEntity<ErrorDTO>(new ErrorDTO(ErrorCode.ITEM_ALREADY_EXISTS, "A similar item already exists in the cart."), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<ErrorDTO>(new ErrorDTO(ErrorCode.ITEM_ALREADY_EXISTS, "A similar item already exists in the cart."), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ItemNotFoundException.class)
