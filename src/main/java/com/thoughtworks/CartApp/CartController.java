@@ -24,11 +24,11 @@ public class CartController {
         if(id.trim().length() > 0){
             return getItemById(Integer.parseInt(id));
         }
-        return cartService.viewItems();
+        return cartService.getItemList();
     }
 
     public CartDTO searchByStringPattern(String name){
-        return cartService.searchByStringPattern(name);
+        return cartService.getItemListByNameBasedPattern(name);
     }
 
     public CartDTO getItemById(int id){

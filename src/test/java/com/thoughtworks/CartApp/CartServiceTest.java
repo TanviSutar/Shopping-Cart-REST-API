@@ -26,30 +26,30 @@ public class CartServiceTest {
     private CartService cartService;
 
     private Item itemPencil;
-    private Item itemEraser;
     private ItemDTO itemDTOSharpener;
     private ArrayList<Item> itemList;
-    private CartDTO cart;
+    private CartDTO cartDTO;
 
     @BeforeEach
     void setUp() {
         itemPencil = new Item("Pencil", 20);
-        itemEraser = new Item("Erasure", 5);
         itemDTOSharpener = new ItemDTO("Sharpener", 30);
         itemList = new ArrayList<>() {
             {
                 add(itemPencil);
-                add(itemEraser);
             }
         };
-        cart = new CartDTO(itemList);
+        cartDTO = new CartDTO(itemList);
     }
 
     @Test
-    void shouldCallAddMethodOfCartRepositoryWhenValidItemIsBeingAdded() throws ItemAlreadyExistsException {
-        cartService.addItem(itemDTOSharpener);
+    void shouldCallAddMethodOfCartRepositoryWhenValidItemIsBeingAdded() {
+        Item itemSharpener = new Item(itemDTOSharpener.getName(), itemDTOSharpener.getCost());
+        when(itemRepository.save(any())).thenReturn(itemSharpener);
 
-        verify(itemRepository, times(1)).save(any());
+        int savedId = cartService.addItem(itemDTOSharpener);
+
+        assertThat(savedId, is(equalTo(itemSharpener.getId())));
     }
 
     @Test
@@ -64,43 +64,6 @@ public class CartServiceTest {
     }
 
     @Test
-    void shouldCallRemoveMethodOfCartRepositoryWhenItemIsBeingDeleted() {
-        when(itemRepository.existsById(any())).thenReturn(true);
-
-        cartService.deleteItemById(itemPencil.getId());
-
-        verify(itemRepository, times(1)).deleteById(any());
-    }
-
-    @Test
-    void shouldThrowItemNotFoundExceptionWhenTheItemIsNotAvailableInTheCart() {
-        Item itemScale = new Item("Scale", 15);
-        when(itemRepository.existsById(any())).thenReturn(false);
-
-        assertThrows(ItemNotFoundException.class, () -> {
-            cartService.deleteItemById(itemScale.getId());
-        });
-
-        verify(itemRepository, never()).deleteById(itemScale.getId());
-    }
-
-    @Test
-    void shouldReturnAllCartItemsWhenAllItemsNeedToBeViewed() {
-        when(itemRepository.findAll()).thenReturn(itemList);
-
-        Iterable<Item> actualItemList = cartService.viewItems().getItems();
-
-        assertThat(actualItemList, is(equalTo(itemList)));
-    }
-
-    @Test
-    void shouldReturnTwentyFiveAsTotalCostWhenCartHasPencilWorthTwentyRupeesAndErasureWorthFiveRupees() {
-        when(itemRepository.findAll()).thenReturn(itemList);
-
-        assertThat(cartService.viewItems().getTotalCost(), is(equalTo(25.0)));
-    }
-
-    @Test
     void shouldReturnItemGivenTheItemId() {
         when(itemRepository.existsById(itemPencil.getId())).thenReturn(true);
         when(itemRepository.findById(itemPencil.getId())).thenReturn(Optional.ofNullable(itemPencil));
@@ -109,7 +72,7 @@ public class CartServiceTest {
     }
 
     @Test
-    void shouldThrowItemNotFoundExceptionWhenNoItemByGivenIdIsFound() {
+    void shouldThrowItemNotFoundExceptionWhenNoItemWithGivenIdIsFound() {
         when(itemRepository.existsById(itemPencil.getId())).thenReturn(false);
 
         assertThrows(ItemNotFoundException.class, () -> {
@@ -119,33 +82,85 @@ public class CartServiceTest {
         verify(itemRepository, never()).findById(itemPencil.getId());
     }
 
-    //TODO review
     @Test
     void shouldReturnItemListHavingAllItemsWithNameMatchingTheGivenSearchString() {
-        ArrayList<Item> itemList = new ArrayList<>(){
-            {
-                add(itemPencil);
-            }
-        };
         String searchString = "pen";
+        when(itemRepository.findByNameContaining(searchString)).thenReturn(itemList);
 
-        when(itemRepository.findByNameLike(any())).thenReturn(itemList);
+        CartDTO resultantCartDTO = cartService.getItemListByNameBasedPattern(searchString);
 
-        CartDTO cartDTO = cartService.searchByStringPattern(searchString);
-
-        verify(itemRepository).findByNameLike(any());
-
+        assertThat(resultantCartDTO, is(equalTo(cartDTO)));
     }
 
     @Test
-    void shouldDeleteItemGivenTheNameOfTheItem() {
-        String name = "pencil";
-        when(itemRepository.findByNameLike(any())).thenReturn(new ArrayList<>(){
-            {
-                add(itemPencil);
-            }
+    void shouldThrowItemNotFoundExceptionWhenNoItemWithNameHavingTheGivenPatternExists(){
+        String searchString = "cat";
+        when(itemRepository.findByNameContaining(searchString)).thenReturn(new ArrayList<Item>());
+
+        assertThrows(ItemNotFoundException.class, () -> {
+            cartService.getItemListByNameBasedPattern(searchString);
         });
+    }
+
+    @Test
+    void shouldReturnEmptyListOfCartItems() {
+        CartDTO cartDTO = new CartDTO(new ArrayList<>());
+        when(itemRepository.findAll()).thenReturn(cartDTO.getItems());
+
+        CartDTO resultantCartDTO = cartService.getItemList();
+
+        assertThat(resultantCartDTO, is(equalTo(cartDTO)));
+    }
+
+    @Test
+    void shouldReturnAllCartItems() {
+        when(itemRepository.findAll()).thenReturn(cartDTO.getItems());
+
+        CartDTO resultantCartDTO = cartService.getItemList();
+
+        assertThat(resultantCartDTO, is(equalTo(cartDTO)));
+    }
+
+    @Test
+    void shouldCallDeleteByIdMethodOfItemRepositoryWhenItemIsBeingDeletedUsingId() {
+        when(itemRepository.existsById(itemPencil.getId())).thenReturn(true);
+
+        cartService.deleteItemById(itemPencil.getId());
+
+        verify(itemRepository, times(1)).deleteById(itemPencil.getId());
+    }
+
+    @Test
+    void shouldThrowItemNotFoundExceptionWhileDeletingItemUsingIdWhenTheItemIsNotAvailableInTheCart() {
+        when(itemRepository.existsById(itemPencil.getId())).thenReturn(false);
+
+        assertThrows(ItemNotFoundException.class, () -> {
+            cartService.deleteItemById(itemPencil.getId());
+        });
+
+        verify(itemRepository, never()).deleteById(itemPencil.getId());
+    }
+
+    @Test
+    void shouldDeleteItemWhenGivenTheNameOfTheItem() {
+        String name = "pencil";
+        when(itemRepository.findByNameContaining(name)).thenReturn(itemList);
+
         cartService.deleteItemByName(name);
+
         verify(itemRepository).deleteByName(name);
     }
+
+    @Test
+    void shouldThrowItemNotFoundExceptionWhenNoItemWithGivenNameExists() {
+        String name = "eraser";
+        when(itemRepository.findByNameContaining(name)).thenReturn(new ArrayList<Item>());
+
+        assertThrows(ItemNotFoundException.class, () -> {
+            cartService.deleteItemByName(name);
+        });
+
+        verify(itemRepository, never()).deleteByName(name);
+    }
+
 }

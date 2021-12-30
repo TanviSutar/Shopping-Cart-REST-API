@@ -15,20 +15,8 @@ public class CartService {
         if(itemRepository.existsByName(itemDTO.getName())){
             throw new ItemAlreadyExistsException();
         }
-        Item item = new Item(itemDTO.getName().toLowerCase(), itemDTO.getCost());
-        itemRepository.save(item);
-        return item.getId();
-    }
-
-    void deleteItemById(int itemId) {
-        if (!itemRepository.existsById(itemId)) {
-           throw new ItemNotFoundException();
-        }
-        itemRepository.deleteById(itemId);
-    }
-
-    CartDTO viewItems() {
-        return new CartDTO(itemRepository.findAll());
+        Item savedItem = itemRepository.save(new Item(itemDTO.getName().toLowerCase(), itemDTO.getCost()));
+        return savedItem.getId();
     }
 
     public Item getItemById(int id) {
@@ -38,16 +26,27 @@ public class CartService {
         return itemRepository.findById(id).get();
     }
 
-    public CartDTO searchByStringPattern(String searchString) {
-        List<Item> itemList = itemRepository.findByNameLike("%"+searchString+"%");
+    public CartDTO getItemListByNameBasedPattern(String searchString) {
+        List<Item> itemList = itemRepository.findByNameContaining(searchString);
         if(itemList.size() == 0){
             throw new ItemNotFoundException();
         }
         return new CartDTO(itemList);
     }
 
+    CartDTO getItemList() {
+        return new CartDTO(itemRepository.findAll());
+    }
+
+    void deleteItemById(int itemId) {
+        if (!itemRepository.existsById(itemId)) {
+            throw new ItemNotFoundException();
+        }
+        itemRepository.deleteById(itemId);
+    }
+
     public void deleteItemByName(String name) {
-        if(itemRepository.findByNameLike("%"+name+"%").size() == 0){
+        if(itemRepository.findByNameContaining(name).size() == 0){
             throw new ItemNotFoundException();
         }
         itemRepository.deleteByName(name);

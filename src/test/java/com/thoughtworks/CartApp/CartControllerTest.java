@@ -59,13 +59,13 @@ public class CartControllerTest {
 
     @Test
     void shouldReturnListOfItems() throws Exception {
-        when(cartService.viewItems()).thenReturn(cart);
+        when(cartService.getItemList()).thenReturn(cart);
 
         mockMvc.perform(get("/cart/items"))
                 .andExpect(content().json(new ObjectMapper().writeValueAsString(cart)))
                 .andExpect(status().isOk());
 
-        verify(cartService).viewItems();
+        verify(cartService).getItemList();
     }
 
     @Test
@@ -103,13 +103,13 @@ public class CartControllerTest {
 
     @Test
     void shouldReturnTwentyFiveAsTotalCostWhenPencilWorthTwentyRupeesAndEraserWorthFiveRupeesIsAddedToTheCart() throws Exception {
-        when(cartService.viewItems()).thenReturn(cart);
+        when(cartService.getItemList()).thenReturn(cart);
 
         mockMvc.perform(get("/cart/items"))
                 .andExpect(content().json(new ObjectMapper().writeValueAsString(cart)))
                 .andExpect(status().isOk());
 
-        verify(cartService).viewItems();
+        verify(cartService).getItemList();
         assertThat(cart.getTotalCost(), is(equalTo(25.0)));
     }
 
@@ -145,11 +145,11 @@ public class CartControllerTest {
                 add(itemPencil);
             }
         });
-        when(cartService.searchByStringPattern(searchString)).thenReturn(cartDTO);
+        when(cartService.getItemListByNameBasedPattern(searchString)).thenReturn(cartDTO);
 
         mockMvc.perform(get("/cart/items?name={name}", searchString))
                 .andExpect(status().isOk());
 
-        verify(cartService).searchByStringPattern(searchString);
+        verify(cartService).getItemListByNameBasedPattern(searchString);
     }
 }
