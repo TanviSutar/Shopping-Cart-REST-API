@@ -1,5 +1,7 @@
 package com.thoughtworks.CartApp;
 
+import com.thoughtworks.CartApp.custom_exceptions.ItemAlreadyExistsException;
+import com.thoughtworks.CartApp.custom_exceptions.ItemNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,18 +45,18 @@ public class CartController {
     }
 
     @RequestMapping(value = "/cart/items", method = RequestMethod.POST)
-    public ResponseEntity<DTO> addItem(@RequestBody ItemDTO item) {
+    public ResponseEntity<DTO> addItem(@RequestBody ItemDTO itemDTO) {
 
-        if (item.getName().trim().length() == 0) {
+        if (itemDTO.getName().trim().length() == 0) {
             LOG.info("Attempt to enter invalidly named item.");
             return new ResponseEntity<>(new ErrorDTO(ErrorCode.INVALID_ITEM_NAME, "Item name should be non-empty string."), BAD_REQUEST);
         }
 
-        int id = cartService.addItem(item);
+        int id = cartService.addItem(itemDTO);
 
-        LOG.info(item.getName()+" has been added successfully.");
+        LOG.info(itemDTO.getName()+" has been added successfully.");
 
-        return new ResponseEntity<>(new ResponseDTO(id, item.getName() + " added to the cart."), CREATED);
+        return new ResponseEntity<>(new ResponseDTO(id, itemDTO.getName() + " added to the cart."), CREATED);
     }
 
     @RequestMapping(value = "/cart/items/{id}", method = RequestMethod.DELETE)

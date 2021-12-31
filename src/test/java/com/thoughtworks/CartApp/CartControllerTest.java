@@ -2,13 +2,16 @@ package com.thoughtworks.CartApp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.CartApp.custom_exceptions.ItemAlreadyExistsException;
+import com.thoughtworks.CartApp.custom_exceptions.ItemNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -17,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -135,21 +139,6 @@ public class CartControllerTest {
                         .andExpect(status().isBadRequest());
 
         verify(cartService, never()).addItem(any());
-    }
-
-    @Disabled
-    @Test
-    void shouldNotAddDuplicateItemToCart() throws Exception {
-        ErrorDTO errorDTO = new ErrorDTO(ErrorCode.ITEM_ALREADY_EXISTS, "A similar item already exists in the cart.");
-        when(cartService.addItem(itemPencilDTO)).thenThrow(new ItemAlreadyExistsException());
-
-        mockMvc.perform(post("/cart/items")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(itemPencilDTO)))
-                        .andExpect(content().json(new ObjectMapper().writeValueAsString(errorDTO)))
-                        .andExpect(status().isConflict());
-
-        verify(cartService).addItem(itemPencilDTO);
     }
 
     @Test
