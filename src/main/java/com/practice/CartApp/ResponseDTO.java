@@ -1,4 +1,4 @@
-package com.thoughtworks.CartApp;
+package com.practice.CartApp;
 
 public class ResponseDTO implements DTO{
     private final int id;

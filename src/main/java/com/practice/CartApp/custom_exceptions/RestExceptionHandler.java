@@ -1,7 +1,7 @@
-package com.thoughtworks.CartApp.custom_exceptions;
+package com.practice.CartApp.custom_exceptions;
 
-import com.thoughtworks.CartApp.ErrorCode;
-import com.thoughtworks.CartApp.ErrorDTO;
+import com.practice.CartApp.ErrorCode;
+import com.practice.CartApp.ErrorDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

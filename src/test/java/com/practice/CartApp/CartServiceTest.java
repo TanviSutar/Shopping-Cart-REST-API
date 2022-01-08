@@ -1,7 +1,7 @@
-package com.thoughtworks.CartApp;
+package com.practice.CartApp;
 
-import com.thoughtworks.CartApp.custom_exceptions.ItemAlreadyExistsException;
-import com.thoughtworks.CartApp.custom_exceptions.ItemNotFoundException;
+import com.practice.CartApp.custom_exceptions.ItemAlreadyExistsException;
+import com.practice.CartApp.custom_exceptions.ItemNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

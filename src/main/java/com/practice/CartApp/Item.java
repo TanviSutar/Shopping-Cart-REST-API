@@ -1,4 +1,4 @@
-package com.thoughtworks.CartApp;
+package com.practice.CartApp;
 
 import javax.persistence.Entity;
 import java.util.Objects;
