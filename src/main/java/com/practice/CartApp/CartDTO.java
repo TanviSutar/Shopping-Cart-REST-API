@@ -1,4 +1,4 @@
-package com.thoughtworks.CartApp;
+package com.practice.CartApp;
 
 import java.util.Objects;
 

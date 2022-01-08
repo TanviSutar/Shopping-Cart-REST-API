@@ -1,4 +1,4 @@
-package com.thoughtworks.CartApp;
+package com.practice.CartApp;
 
 public enum ErrorCode {
     ITEM_ALREADY_EXISTS(0),

@@ -1,17 +1,12 @@
-package com.thoughtworks.CartApp;
+package com.practice.CartApp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.CartApp.custom_exceptions.ItemAlreadyExistsException;
-import com.thoughtworks.CartApp.custom_exceptions.ItemNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;

@@ -1,4 +1,4 @@
-package com.thoughtworks.CartApp;
+package com.practice.CartApp;
 
 public class ErrorDTO implements DTO{
     public final ErrorCode errorCode;

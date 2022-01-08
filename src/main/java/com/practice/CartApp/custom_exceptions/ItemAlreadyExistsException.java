@@ -1,4 +1,4 @@
-package com.thoughtworks.CartApp.custom_exceptions;
+package com.practice.CartApp.custom_exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

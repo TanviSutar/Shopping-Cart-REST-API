@@ -1,4 +1,4 @@
-package com.thoughtworks.CartApp;
+package com.practice.CartApp;
 
 public class ItemDTO implements DTO{
     private final String name;
